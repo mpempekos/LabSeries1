@@ -15,7 +15,6 @@ import Set;
    1. remove duplicates from list
    2. put it in a loop
    3. check for given programs
-   4. delete some java_programs
 */
 
 
