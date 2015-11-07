@@ -37,9 +37,7 @@ void numbDuplicatedLines() {
 		}			
 		//println("<codeLines[i]>");
 	}	
-	
-	// for those found as duplicated, now check for blocks for each
-	println("number of duplicated lines: <size(lines)>");
+	println("number of duplicated lines: <size(dupLines)>");
 
 }
 
