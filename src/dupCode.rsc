@@ -8,10 +8,11 @@ import Set;
 import List;
 import String;
 
+// currently being tested with project "softEvolTest"
 void numbDuplicatedLines() {
 	int dupFound = 0;
 	set[int] dupLines = {};
-	
+		
 	M3 myModel = createM3FromEclipseProject(|project://softEvolTest|);	
 	list[str] codeLines = code2listLines(myModel);	
 	//println(codeLines);
@@ -57,7 +58,7 @@ list[str] code2listLines(M3 model) {
 	myClasses = classes(model);
 	//println(myClasses);	
 	c = toList(myClasses);
-	classSrc = readFileLines(c[0]);
+	classSrc = readFileLines(c[0]); // WARNING: JUST RETURNIG FIRST CLASS
 	return classSrc;
 }
 

@@ -10,15 +10,6 @@ import lang::java::jdt::m3::Core;
 **** @author: Spiros ****
 ************************/
 
-<<<<<<< HEAD
-=======
-/* this works... TODO below...
-   1. remove duplicates from list
-   2. put it in a loop
-   3. check for given programs
-*/
-
->>>>>>> b10dacf40e10e4f470b9112d4db4f132f444c95e
 
 list[int] helpFunc(loc id) {
 	if (id.path[-4..] == "java")  

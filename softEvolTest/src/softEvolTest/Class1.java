@@ -28,15 +28,18 @@ public class Class1 {
 	
 	public boolean complexity() {
 		boolean p = true;
+		boolean q = true;
 		if(p) {
-			return p;	
-		}
-		
+			if (q) {
+				return p;
+			}	
+			q = false;
+		}					
 		if(p) {
 			p = true;
 		} else {
 			p = true;
 		}
-		return false;
+		return p;
 	}
 }
