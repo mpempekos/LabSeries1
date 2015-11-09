@@ -53,7 +53,7 @@ void numbDuplicatedLines() {
 		}			
 		//println("<codeLines[i]>");
 	}	
-	println("number of duplicated lines: <size(dupLines)>");
+	//println("number of duplicated lines: <size(dupLines)>");
 
 }
 
@@ -62,13 +62,13 @@ int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
 	//println("i is <i> and j is <j>");
 	//println("Equal lines are <codeLines[i]> and <codeLines[j]>");
 	int count = 1;
-	println("i is <i> and j is <j>");
+	//println("i is <i> and j is <j>");
 	for(int k <- [1..size(codeLines)-j]) {	
-		iprintln("<codeLines[i+k]> kai <codeLines[j+k]>");
+		//iprintln("<codeLines[i+k]> kai <codeLines[j+k]>");
 		if (codeLines[i+k] != codeLines[j+k]) {
 			return count;
 		}		
-		println("Found another line!");
+		//println("Found another line!");
 		count = count + 1;
 	}
 	return count;
@@ -77,27 +77,13 @@ int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
 
 list[str] code2listLines(M3 model) {
 	myClasses = classes(model);
-	//println(myClasses);	
 	c = toList(myClasses);
+	list[str] classSrc = [];
 	
-	/* ineseert a lloop */
-	classSrc = readFileLines(c[1]); // WARNING: JUST RETURNIG FIRST CLASS
+	println(c);;
+	
+	for (i <- [0..size(c)]) 
+		classSrc = readFileLines(c[i]); // WARNING: JUST RETURNIG FIRST CLASS
 	//println("Here2: <classSrc>");
 	return classSrc;
 }
-
-/*
-void abc() {
-	
-	myMethods = methods(myModel);
-	//println(myMethods);
-	l = toList(myMethods);
-	
-	
-	//println(l[0]);
-	methodAST = getMethodASTEclipse(l[0], model=myModel);
-	//iprintln(methodAST);
-	methodSrc = readFile(l[0]);
-	//println(methodSrc);
-} */
-
