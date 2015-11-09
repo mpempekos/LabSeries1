@@ -18,7 +18,8 @@ void checkCyclomaticComplexity() {
 	int highRiskLOC = 0;	
 	int veryhighRiskLOC = 0;	
 
-	M3 myModel = createM3FromEclipseProject(|project://softEvolTest|);	
+	//M3 myModel = createM3FromEclipseProject(|project://softEvolTest|);	
+	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	
 	myMethods = methods(myModel);
 	//println(myMethods);
@@ -61,8 +62,12 @@ int checkMethodCyclomaticComplexity(list[str] methodLOC) {
 	int lo = 0;
 	
 	for(int i <- [0..size(methodLOC)]) {
-		println(methodLOC[i]); 
+<<<<<<< HEAD
+		//println(methodLOC[i]); 
 		// ISSUE: why methodLOC[i] only have some LOC of the method and not all of them?
+=======
+		//println(methodLOC[i]); 		
+>>>>>>> 5136a38828d93c7637124b7817e5f5120900a536
 
 		if(isIfStatement(methodLOC[i])) {
 			cc = cc + 1; 			
@@ -88,70 +93,4 @@ bool isIfStatement(str line) {
 
 bool isElseStatement(str line) {	
 	return contains(line, "else");
-}
-
-list[str] purifyText(list[str] source) {
-	list [str] pureList = [];
-	bool commentOpened = false;
-	singleCommentLines=0;	totalLines =0;	blankLines =0; multiCommentLines =0;
-	
-	for (i <- source) {
-			
-		if (commentOpened) {
-			if(/^[ \t\r\n]*$/ := i)				// it's a blank line
-	 		   blankLines +=1;
-	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// it's a comment that finishes...
-	 			commentOpened = false;
-	 			multiCommentLines +=1;
-	 		}
-	 		else if (/^.*\*\/[\w]*$/ := i)	 {			// it has code...
-	 			commentOpened = false;
-	 			pureList += i;
-	 		}
-	 		else  										// comment goes on . . . 
-	 			multiCommentLines +=1;
-	 	}
-	 		
-		else if(/^[ \t\r\n]*$/ := i)
-	 		blankLines +=1;
-	 	
-	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // pianei ta */
-      		multiCommentLines +=1;
-	 		//println("Skata1: <i>");
-	 	}
-	 			
-	 	else if (/^[^\w]*\/\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta /* ... */ xwris kodika profanws
-      		multiCommentLines +=1;
-	 		//println("Skata2: <i>");
-	 	}
-	 	
-	 	else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
-	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
-	 		commentOpened = true;
-	 		multiCommentLines +=1;
-	 		//println("coment open!");
-	 	}
-	 	
-	/* 	else if (/^[^\w]*\*[^\*\/[\s\t\n]]*$/ :=  i ) {		// pianei ta * ...
-	 		multiCommentLines+=1;
-	 		println("skata3: <i>");
-	 	}
-	 	*/
-	 	
-	 	else if (/^[^\w]*\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta * .... */ xwris kodika profanws
-      		multiCommentLines +=1;
-	 	//	println("Skata4: <i>");
-	 	}
-	 		
-	   	else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
-      	//else if (/^[^\w}{;]*\/\// := i)		// ---> 24643... seems right but wtf?
-      		singleCommentLines +=1;
-      	else
-      		pureList+= i;
-     }
-     
-     
-     comments = singleCommentLines + multiCommentLines;
-     linesOfCode = totalLines - (blankLines + comments);
-	 return pureList;
 }

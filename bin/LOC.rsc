@@ -5,6 +5,7 @@ import IO;
 import List;
 import lang::java::m3::Core;
 import lang::java::jdt::m3::Core;
+import String;
 
 /************************
 **** @author: Spiros ****
@@ -12,17 +13,9 @@ import lang::java::jdt::m3::Core;
 
 /*   Small file: comm: 8981   loc: 24048				Big file: comm: 74364    loc: 168836
 
------------------------------------------------- Old method ----------------------------------------------------------------
-
-LOC are 24103    ----->  55 f%$^&%& lines missing!!!		LOC are 180584 	------>  11750 f%^&%^&% lines missing!!!
-comments are 8926											comments are 66714
-blank lines are 5394										blank lines are 56829  --->  301 f%$^$%^%$ lines...? wtf?
-
-
 ------------------------------------------------ New method ----------------------------------------------------------------
 
 LOC are 22795    ----->   1253 f%^&^% lines...				LOC are 169246 ---> 410 lines missing....
-comments are 9280											comments are 68799
 blank lines are 5394										blank lines are 56829
 
 */
@@ -30,8 +23,8 @@ blank lines are 5394										blank lines are 56829
 
 void cloc() {
 	//loc project = |project://TestProject2|;
-    loc project = |project://hsqldb-2.3.1|;
-    //loc project = |project://smallsql0.21_src|;
+    //loc project = |project://hsqldb-2.3.1|;
+    loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	linesOfCode = 0; comments = 0;	blankLines = 0;
@@ -78,10 +71,25 @@ list[int] checkFile(loc id) {
 	 			commentOpened = false;
 	 			multiCommentLines +=1;
 	 		}
-	 		else if (/^.*\*\/[\w]*$/ := i)				// it has code...
-	 			commentOpened = false;
-	 		else  										// comment goes on . . . 
+	 		//else if (/^.*\*\/[\w]*$/ := i)				// it has code...
+	 		else if (/.*\*\// := i) {			// kleinei alla exei kati akoma meta...
+	 			//commentOpened = false;
+	 			i = i[findFirst(i,"*/")+2..];
+	 			if (/^[^\w}{;]*\/\// := i)	{	// simple comment follows...
+	 				commentOpened = false;
+	 				multiCommentLines+=1;
+	 			}
+	 			else if (/^[ \t\r\n]*$/ := i) {	// nothing follows... {
+	 				multiCommentLines+=1;
+	 				commentOpened = false;
+	 			}
+	 			else commentOpened = false;						// there is code...
+	 			//findFirst(i,"*/");
+	 			}
+	 		else  			{							// comment goes on . . . 
 	 			multiCommentLines +=1;
+	 			println("comment goes on");
+	 			}
 	 	}
 	 		
 		else if(/^[ \t\r\n]*$/ := i)
@@ -97,11 +105,16 @@ list[int] checkFile(loc id) {
 	 		//println("Skata2: <i>");
 	 	}
 	 	
-	 	else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
+	 	//else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
 	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
+	 	  else if  (/^[^\w]*\/\*/ :=  i ) {	
+	 	    if (/\*\//:= i) println("skata!");
+	 	    else {
 	 		commentOpened = true;
 	 		multiCommentLines +=1;
-	 		//println("coment open!");
+	 		println("coment open at <i>");
+	 		}
+	 		//println("<i>");
 	 	}
 	 	
 	/* 	else if (/^[^\w]*\*[^\*\/[\s\t\n]]*$/ :=  i ) {		// pianei ta * ...
