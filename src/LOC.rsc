@@ -22,15 +22,14 @@ blank lines are 5394										blank lines are 56829  --->  301 f%$^$%^%$ lines..
 ------------------------------------------------ New method ----------------------------------------------------------------
 
 LOC are 22795    ----->   1253 f%^&^% lines...				LOC are 169246 ---> 410 lines missing....
-comments are 9280											comments are 68799
 blank lines are 5394										blank lines are 56829
 
 */
 
 
 void cloc() {
-	//loc project = |project://TestProject2|;
-    loc project = |project://hsqldb-2.3.1|;
+	loc project = |project://TestProject2|;
+    //loc project = |project://hsqldb-2.3.1|;
     //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
@@ -97,11 +96,12 @@ list[int] checkFile(loc id) {
 	 		//println("Skata2: <i>");
 	 	}
 	 	
-	 	else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
-	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
+	 	//else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
+	 	else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
 	 		commentOpened = true;
 	 		multiCommentLines +=1;
 	 		//println("coment open!");
+	 		//println("<i>");
 	 	}
 	 	
 	/* 	else if (/^[^\w]*\*[^\*\/[\s\t\n]]*$/ :=  i ) {		// pianei ta * ...
