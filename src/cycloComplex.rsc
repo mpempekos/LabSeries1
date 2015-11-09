@@ -62,8 +62,12 @@ int checkMethodCyclomaticComplexity(list[str] methodLOC) {
 	int lo = 0;
 	
 	for(int i <- [0..size(methodLOC)]) {
+<<<<<<< HEAD
 		//println(methodLOC[i]); 
 		// ISSUE: why methodLOC[i] only have some LOC of the method and not all of them?
+=======
+		//println(methodLOC[i]); 		
+>>>>>>> 5136a38828d93c7637124b7817e5f5120900a536
 
 		if(isIfStatement(methodLOC[i])) {
 			cc = cc + 1; 			
