@@ -87,3 +87,85 @@ list[str] code2listLines(M3 model) {
 	//println("Here2: <classSrc>");
 	return classSrc;
 }
+
+
+list[str] purifyCode(list[str] src) {
+
+	commentOpened = false;
+	pureList = [];
+	
+	for (i <- src) {
+			
+		if (commentOpened) {
+			if(/^[ \t\r\n]*$/ := i)				// it's a blank line
+	 		   println("skata");
+	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// it's a comment that finishes...
+	 			commentOpened = false;
+	 			//multiCommentLines +=1;
+	 		}
+
+	 		else if (/.*\*\// := i) {			// might have code...
+	 			i = i[findFirst(i,"*/")+2..];
+	 			if (/^[^\w}{;]*\/\// := i)	{	// simple comment follows...
+	 				commentOpened = false;
+	 				//multiCommentLines+=1;
+	 			}
+	 			else if (/^[ \t\r\n]*$/ := i) {	// nothing follows... {
+	 				//multiCommentLines+=1;
+	 				commentOpened = false;
+	 			}
+	 			else {
+	 			commentOpened = false;						// there is code...
+	 			pureList += i;
+	 			}
+	 			//findFirst(i,"*/");
+	 		}
+	 		else  			{							// comment goes on . . . 
+	 			//multiCommentLines +=1;
+	 			println("comment goes on");
+	 			}
+	 	}
+	 		
+		else if(/^[ \t\r\n]*$/ := i)
+	 		//blankLines +=1;
+	 		println("Skata4: <i>");
+	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // pianei ta */
+      		//multiCommentLines +=1;
+	 		println("Skata1: <i>");
+	 	}
+	 			
+	 	else if (/^[^\w]*\/\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta /* ... */ xwris kodika profanws
+      		//multiCommentLines +=1;
+	 		println("Skata2: <i>");
+	 	}
+	 	
+	 	//else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
+	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
+	 	  else if  (/^[^\w]*\/\*/ :=  i ) {	
+	 	    if (/\*\//:= i) println("skata!");
+	 	    else {
+	 		commentOpened = true;
+	 		//multiCommentLines +=1;
+	 		//println("coment open at <i>");
+	 		}
+	 		//println("<i>");
+	 	}
+
+	 	
+	 	else if (/^[^\w]*\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta * .... */ xwris kodika profanws
+      		//multiCommentLines +=1;
+	 		println("Skata4: <i>");
+	 	}
+	 		
+	   	//else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
+      	else if (/^[^\w}{;]*\/\// := i)		// ---> 24643... seems right but wtf?
+      		// singleCommentLines +=1;
+      		println("Skata4: <i>");
+      	else 			// CODE BITCH!
+      		pureList+=i;
+     }
+     
+//     comments = singleCommentLines + multiCommentLines;
+  //   linesOfCode = totalLines - (blankLines + comments);
+	 return pureList;
+}

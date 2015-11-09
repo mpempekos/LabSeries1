@@ -23,8 +23,8 @@ blank lines are 5394										blank lines are 56829
 
 void cloc() {
 	//loc project = |project://TestProject2|;
-    //loc project = |project://hsqldb-2.3.1|;
-    loc project = |project://smallsql0.21_src|;
+    loc project = |project://hsqldb-2.3.1|;
+    //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	linesOfCode = 0; comments = 0;	blankLines = 0;
@@ -128,8 +128,8 @@ list[int] checkFile(loc id) {
 	 	//	println("Skata4: <i>");
 	 	}
 	 		
-	   	else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
-      	//else if (/^[^\w}{;]*\/\// := i)		// ---> 24643... seems right but wtf?
+	   	//else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
+      	else if (/^[^\w}{;]*\/\// := i)		// ---> 24643... seems right but wtf?
       		singleCommentLines +=1;
      }
      
