@@ -4,12 +4,6 @@ public class Class1 {
 	private int a;
 	private int b;
 	
-	public static void main( String[] args ) {
-		int a = 1;
-		int b = 2;		
-		System.out.println(a + b);
-	}
-	
 	public int sum2ints(int a, int b) {
 		this.a = a;
 		this.b = b;	
@@ -26,20 +20,4 @@ public class Class1 {
 		return this.a + this.b;
 	}
 	
-	public boolean complexity() {
-		boolean p = true;
-		boolean q = true;
-		if(p) {
-			if (q) {
-				return p;
-			}	
-			q = false;
-		}					
-		if(p) {
-			p = true;
-		} else {
-			p = true;
-		}
-		return p;
-	}
 }

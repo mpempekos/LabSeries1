@@ -18,7 +18,8 @@ void checkCyclomaticComplexity() {
 	int highRiskLOC = 0;	
 	int veryhighRiskLOC = 0;	
 
-	M3 myModel = createM3FromEclipseProject(|project://softEvolTest|);	
+	//M3 myModel = createM3FromEclipseProject(|project://softEvolTest|);	
+	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	
 	myMethods = methods(myModel);
 	//println(myMethods);
@@ -61,7 +62,7 @@ int checkMethodCyclomaticComplexity(list[str] methodLOC) {
 	int lo = 0;
 	
 	for(int i <- [0..size(methodLOC)]) {
-		println(methodLOC[i]); 
+		//println(methodLOC[i]); 
 		// ISSUE: why methodLOC[i] only have some LOC of the method and not all of them?
 
 		if(isIfStatement(methodLOC[i])) {
