@@ -20,4 +20,13 @@ public class Class1 {
 		return this.a + this.b;
 	}
 	
+	public void complex(int a, int b) {
+		if(a == 1) {
+			b = 1;
+		}
+		else {
+			return;
+		}
+	}
+	
 }
