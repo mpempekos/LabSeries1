@@ -19,40 +19,39 @@ list[str] checkIfJavaFile(loc id) {
 }
 
 list[str] replaceShit(list[str] codeLines) {
-	finalList = [];
-	for (i <- codeLines) {
+   finalList = [];
+   for (i <- codeLines) {
 	
 	/* check for semi-comments */
-	
-	println ("<i>");
-	
-	if (/\/\// := i) { 					// int a; //
+		
+	if (/\/\// := i) { 					// found //
 		i = i[..findFirst(i,"//")];
-		println("skata sto  <i>");
 	}
 	
-	else if ((/\/\*/ := i) && (/\*\// := i)) {	// take what is before or after the comments...
+	else if ((/\/\*/ := i) && (/\*\// := i)) {	// found code in between * / and / *
 		sub_a = i[..findFirst(i,"/*")];
 		sub_b = i[findFirst(i,"*/")+2..];
 		i = sub_a + sub_b;
 	}
 	
-	else if (/\/\*/ := i) {
+	else if (/\/\*/ := i) {					// found code before / *
 		i = i[..findFirst(i,"/*")];
 	}
 	
-	else if (/\*\// := i) {
+	else if (/\*\// := i) {					// found code after * /
 		i = i[findFirst(i,"*/")+2..];
 	}
 	
-		finals = replaceAll(i,"\t","");
-		finals = replaceAll(finals," ","");
-		finalList += finals; 
-	}
+	/* remove tabs and spaces */
 	
-
-	return finalList;
+	tabsRemoved = replaceAll(i,"\t","");
+	spacesRemoved = replaceAll(tabsRemoved," ","");
+	finalList += spacesRemoved; 
+   }
+	
+   return finalList;
 }
+
 void numbDuplicatedLines() {
 	int dupFound = 0;
 	set[int] dupLines = {};
@@ -69,37 +68,28 @@ void numbDuplicatedLines() {
    }
 	
 	println("I have this to check <pureCode>");
-	
 	pureCode = replaceShit(pureCode);
 		
-	//println("I have this to check <pureCode>");
-		
-	for(int i <- [0..size(pureCode)]) {	
+	for(int i <- [0..size(pureCode)]) {
 		if(i notin dupLines) {
 			for(int j <- [i+1..size(pureCode)]) {
 				//println("<codeLines[i]>, <codeLines[j]>");
 				if(pureCode[i] == pureCode[j]) {
 					dupFound = checkFor2EqualBlocks(pureCode, i, j);
-					//println("DUplicate found is <dupFound>");
 					if (dupFound >= 6) {
 						for(int k <- [0..dupFound]) {												
 							dupLines = dupLines + (i+k);
 							dupLines = dupLines + (j+k);			
 						}
-						//println("<i>,<j>, <dupFound>");								
 					}
 				}			
 			}
 		}			
-		//println("<codeLines[i]>");
 	}
 	println("number of duplicated lines: <size(dupLines)>");
-
 }
 
 int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
-	//println("Found 2 equal lines");
-	//println("i is <i> and j is <j>");
 	int count = 1;
 	for(int k <- [1..size(codeLines)-j]) {						// is this 100% sure???
 		//iprintln("<codeLines[i+k]> kai <codeLines[j+k]>");
@@ -113,6 +103,7 @@ int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
 	return count;
 }
 
+/**** do u need this???? ***/
 
 list[str] code2listLines(M3 model) {
 	myClasses = classes(model);
@@ -136,10 +127,12 @@ list[str] getLOC(list[str] src) {
 	for (i <- src) {
 			
 		if (commentOpened) {
+		
 			if(/^[ \t\r\n]*$/ := i)	{			// it's a blank line
 	 		   println("skata");
-	 		   int a;
+	 		   //int a;
 	 		}
+	 		
 	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// it's a comment that finishes...
 	 			commentOpened = false;
 	 			//multiCommentLines +=1;
@@ -220,8 +213,5 @@ list[str] getLOC(list[str] src) {
       	else 			// CODE BITCH!
       		pureList+=i;
      }
-     
-//     comments = singleCommentLines + multiCommentLines;
-  //   linesOfCode = totalLines - (blankLines + comments);
-	 return pureList;
+    return pureList;
 }

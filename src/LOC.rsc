@@ -11,15 +11,6 @@ import String;
 **** @author: Spiros ****
 ************************/
 
-/*   Small file: comm: 8981   loc: 24048				Big file: comm: 74364    loc: 168836
-
------------------------------------------------- New method ----------------------------------------------------------------
-
-LOC are 22795    ----->   1253 f%^&^% lines...				LOC are 169246 ---> 410 lines missing....
-blank lines are 5394										blank lines are 56829
-
-*/
-
 
 void cloc() {
 	//loc project = |project://TestProject2|;
@@ -39,23 +30,22 @@ void cloc() {
 				}
 		}
    }
-   println("*** LOC are <linesOfCode> ****");
-   println("comments are <comments>");
-   println("blank lines are <blankLines>");
+   println("*** Lines Of Code are <linesOfCode> ****");
+   //println("comments are <comments>");
+   //println("blank lines are <blankLines>");
 }
 
 
 list[int] checkFile(loc id) {
 	if (id.path[-4..] == "java")  
 		return countLinesOfFile(id);
-		else 
-			return [];
+	else 
+		return [];
 }
 
 
- list[int] countLinesOfFile(loc id) {
+list[int] countLinesOfFile(loc id) {
 	loc project = |project://TestProject|;
-	//sourceCode = readFileLines(|project://TestProject/src/CClass.java|);
 	sourceCode = readFileLines(id);
 	
 	singleCommentLines=0;	totalLines =0;	blankLines =0; multiCommentLines =0;
@@ -64,72 +54,62 @@ list[int] checkFile(loc id) {
 	
 	for (i <- sourceCode) {
 			
-		if (commentOpened) {
-			if(/^[ \t\r\n]*$/ := i)				// it's a blank line
+		if (commentOpened) {					// a comment has been opened from previous line
+			
+			if(/^[ \t\r\n]*$/ := i)				// blank line
 	 		   blankLines +=1;
-	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// it's a comment that finishes...
+	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// found * / and nothing else
 	 			commentOpened = false;
 	 			multiCommentLines +=1;
 	 		}
-	 		//else if (/^.*\*\/[\w]*$/ := i)				// it has code...
-	 		else if (/.*\*\// := i) {			// kleinei alla exei kati akoma meta...
-	 			//commentOpened = false;
+	 		else if (/.*\*\// := i) {			// found * / and sth follows...
+	 			
 	 			i = i[findFirst(i,"*/")+2..];
-	 			if (/^[^\w}{;]*\/\// := i)	{	// simple comment follows...
+	 			
+	 			if (/^[^\w}{;]*\/\// := i)	{	// simple comment follows...	**** TO DO CHECK THIS *****
 	 				commentOpened = false;
 	 				multiCommentLines+=1;
 	 			}
-	 			else if (/^[ \t\r\n]*$/ := i) {	// nothing follows... {
+	 			else if (/^[ \t\r\n]*$/ := i) {		// nothing follows... 		**** TO DO CHECK THIS **** duplicate?
 	 				multiCommentLines+=1;
 	 				commentOpened = false;
 	 			}
-	 			else commentOpened = false;						// there is code...
-	 			//findFirst(i,"*/");
-	 			}
-	 		else  			{							// comment goes on . . . 
+	 			else commentOpened = false;		// there is code...
+	 		}
+	 		
+	 		else  	{							// comment goes on . . . 
 	 			multiCommentLines +=1;
 	 			println("comment goes on");
-	 			}
+	 		}
 	 	}
 	 		
-		else if(/^[ \t\r\n]*$/ := i)
+		else if(/^[ \t\r\n]*$/ := i)			// blank line
 	 		blankLines +=1;
 	 	
-	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // pianei ta */
+	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // * /	**** TO DO CHECK ****	duplicate
       		multiCommentLines +=1;
-	 		//println("Skata1: <i>");
 	 	}
 	 			
-	 	else if (/^[^\w]*\/\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta /* ... */ xwris kodika profanws
+	 	else if (/^[^\w]*\/\*.*\*\/[\s\t\n]*$/ := i) {	// found /* ... */ no code following
       		multiCommentLines +=1;
-	 		//println("Skata2: <i>");
 	 	}
 	 	
-	 	//else if (/[\s\t\n]*\/\*[^\*\/]*/ := i) {
 	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
-	 	  else if  (/^[^\w]*\/\*/ :=  i ) {	
-	 	    if (/\*\//:= i) println("skata!");
+	 	else if  (/^[^\w]*\/\*/ :=  i ) {				// found /*...
+	 	    if (/\*\//:= i) 
+	 	    	println("skata!");
 	 	    else {
-	 		commentOpened = true;
-	 		multiCommentLines +=1;
-	 		println("coment open at <i>");
+	 			commentOpened = true;
+	 			multiCommentLines +=1;
 	 		}
-	 		//println("<i>");
 	 	}
-	 	
-	/* 	else if (/^[^\w]*\*[^\*\/[\s\t\n]]*$/ :=  i ) {		// pianei ta * ...
-	 		multiCommentLines+=1;
-	 		println("skata3: <i>");
-	 	}
-	 	*/
-	 	
-	 	else if (/^[^\w]*\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta * .... */ xwris kodika profanws
+	 		 	
+	 	else if (/^[^\w]*\*.*\*\/[\s\t\n]*$/ := i) {	// found * .... */ no code following  *** TO DO CHECK ***
       		multiCommentLines +=1;
-	 	//	println("Skata4: <i>");
 	 	}
 	 		
-	   	//else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
-      	else if (/^[^\w}{;]*\/\// := i)		// ---> 24643... seems right but wtf?
+	   	//else if(/[\s\t\n]*\/\// := i)
+      	else if (/^[^\w}{;]*\/\// := i)		// single comment line
       		singleCommentLines +=1;
      }
      
