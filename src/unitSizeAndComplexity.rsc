@@ -21,13 +21,15 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	str unitSizeRating = "?";	
 	str complexityRating = "?";	
 
-	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
+	//M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
+	M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);	
 	myMethods = methods(myModel);		
 	list[loc] methodsLocs = toList(myMethods);
 	
-		for(loc methodLoc <- methodsLocs) {					
-		methodLines = readFileLines(methodLoc);		
-		list[str] methodLOC = getLOC(methodLines);		
+	for(loc methodLoc <- methodsLocs) {					
+		methodLines = readFileLines(methodLoc);			
+		list[str] methodLOC = getLOC(methodLines);	
+				
 		allLOC += size(methodLOC);	
 		
 		// Unit Size Metric
