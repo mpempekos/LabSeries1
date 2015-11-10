@@ -21,11 +21,36 @@ list[str] checkIfJavaFile(loc id) {
 list[str] replaceShit(list[str] codeLines) {
 	finalList = [];
 	for (i <- codeLines) {
+	
+	/* check for semi-comments */
+	
+	println ("<i>");
+	
+	if (/\/\// := i) { 					// int a; //
+		i = i[..findFirst(i,"//")];
+		println("skata sto  <i>");
+	}
+	
+	else if ((/\/\*/ := i) && (/\*\// := i)) {	// take what is before or after the comments...
+		sub_a = i[..findFirst(i,"/*")];
+		sub_b = i[findFirst(i,"*/")+2..];
+		i = sub_a + sub_b;
+	}
+	
+	else if (/\/\*/ := i) {
+		i = i[..findFirst(i,"/*")];
+	}
+	
+	else if (/\*\// := i) {
+		i = i[findFirst(i,"*/")+2..];
+	}
+	
 		finals = replaceAll(i,"\t","");
 		finals = replaceAll(finals," ","");
 		finalList += finals; 
 	}
 	
+
 	return finalList;
 }
 void numbDuplicatedLines() {
@@ -46,6 +71,8 @@ void numbDuplicatedLines() {
 	println("I have this to check <pureCode>");
 	
 	pureCode = replaceShit(pureCode);
+		
+	//println("I have this to check <pureCode>");
 		
 	for(int i <- [0..size(pureCode)]) {	
 		if(i notin dupLines) {
@@ -78,6 +105,7 @@ int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
 		//iprintln("<codeLines[i+k]> kai <codeLines[j+k]>");
 		if (codeLines[i+k] != codeLines[j+k]) {
 			println("counter is <count>");
+			println("<codeLines[i+k]> and <codeLines[j+k]>");
 			return count;
 		}		
 		count = count + 1;
@@ -109,12 +137,13 @@ list[str] getLOC(list[str] src) {
 			
 		if (commentOpened) {
 			if(/^[ \t\r\n]*$/ := i)	{			// it's a blank line
-	 		   //println("skata");
+	 		   println("skata");
 	 		   int a;
 	 		}
 	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// it's a comment that finishes...
 	 			commentOpened = false;
 	 			//multiCommentLines +=1;
+	 			println("skata2");
 	 		}
 
 	 		else if (/.*\*\// := i) {			// might have code...
@@ -122,10 +151,12 @@ list[str] getLOC(list[str] src) {
 	 			if (/^[^\w}{;]*\/\// := i)	{	// simple comment follows...
 	 				commentOpened = false;
 	 				//multiCommentLines+=1;
+	 				println("skata3");
 	 			}
 	 			else if (/^[ \t\r\n]*$/ := i) {	// nothing follows... {
 	 				//multiCommentLines+=1;
 	 				commentOpened = false;
+	 				println("skata4");
 	 			}
 	 			else {
 	 			commentOpened = false;						// there is code...
@@ -137,23 +168,24 @@ list[str] getLOC(list[str] src) {
 	 			//multiCommentLines +=1;
 	 			//println("comment goes on");
 	 			int b;
+	 			println("skata5");
 	 			}
 	 	}
 	 		
 		else if(/^[ \t\r\n]*$/ := i) {
 	 		//blankLines +=1;
-	 		//println("Skata4: <i>");
+	 		println("Skata6: <i>");
 	 		int c;
  		}
-	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // pianei ta */
+	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // pianei ta *  /
       		//multiCommentLines +=1;
-	 		//println("Skata1: <i>");
+	 		println("Skata7");
 	 		int d;
-	 	}
+	 	}  
 	 			
 	 	else if (/^[^\w]*\/\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta /* ... */ xwris kodika profanws
       		//multiCommentLines +=1;
-	 		//println("Skata2: <i>");
+	 		println("Skata8: <i>");
 	 		int e;
 	 	}
 	 	
@@ -161,13 +193,13 @@ list[str] getLOC(list[str] src) {
 	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
 	 	  else if  (/^[^\w]*\/\*/ :=  i ) {	
 	 	    if (/\*\//:= i) {
-	 	    	//println("skata!");
+	 	    	println("skata9");
 	 	    	int f;
 	 	    }
 	 	    else {
 	 		commentOpened = true;
 	 		//multiCommentLines +=1;
-	 		//println("coment open at <i>");
+	 		println("skata10");
 	 		}
 	 		//println("<i>");
 	 	}
@@ -175,14 +207,14 @@ list[str] getLOC(list[str] src) {
 	 	
 	 	else if (/^[^\w]*\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta * .... */ xwris kodika profanws
       		//multiCommentLines +=1;
-	 		//println("Skata4: <i>");
+	 		println("Skata11:");
 	 		int g;
 	 	}
 	 		
 	   	//else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
       	else if (/^[^\w}{;]*\/\// := i)	{	// ---> 24643... seems right but wtf?
       		// singleCommentLines +=1;
-      		//println("Skata4: <i>");
+      		println("Skata12");
       		int h;
       	}
       	else 			// CODE BITCH!
