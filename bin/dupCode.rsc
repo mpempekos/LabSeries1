@@ -129,14 +129,14 @@ list[str] getLOC(list[str] src) {
 		if (commentOpened) {
 		
 			if(/^[ \t\r\n]*$/ := i)	{			// it's a blank line
-	 		   println("skata");
-	 		   //int a;
+	 		   //println("skata");
+	 		   int a;
 	 		}
 	 		
 	 		else if (/^.*\*\/[\s\t\n]*$/ := i) {	// it's a comment that finishes...
 	 			commentOpened = false;
 	 			//multiCommentLines +=1;
-	 			println("skata2");
+	 			//println("skata2");
 	 		}
 
 	 		else if (/.*\*\// := i) {			// might have code...
@@ -144,12 +144,12 @@ list[str] getLOC(list[str] src) {
 	 			if (/^[^\w}{;]*\/\// := i)	{	// simple comment follows...
 	 				commentOpened = false;
 	 				//multiCommentLines+=1;
-	 				println("skata3");
+	 				//println("skata3");
 	 			}
 	 			else if (/^[ \t\r\n]*$/ := i) {	// nothing follows... {
 	 				//multiCommentLines+=1;
 	 				commentOpened = false;
-	 				println("skata4");
+	 				//println("skata4");
 	 			}
 	 			else {
 	 			commentOpened = false;						// there is code...
@@ -161,24 +161,24 @@ list[str] getLOC(list[str] src) {
 	 			//multiCommentLines +=1;
 	 			//println("comment goes on");
 	 			int b;
-	 			println("skata5");
+	 			//println("skata5");
 	 			}
 	 	}
 	 		
 		else if(/^[ \t\r\n]*$/ := i) {
 	 		//blankLines +=1;
-	 		println("Skata6: <i>");
+	 		//println("Skata6: <i>");
 	 		int c;
  		}
 	 	else if (/^.*\*\/[\s\t\n]*$/ := i) {   // pianei ta *  /
       		//multiCommentLines +=1;
-	 		println("Skata7");
+	 		//println("Skata7");
 	 		int d;
 	 	}  
 	 			
 	 	else if (/^[^\w]*\/\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta /* ... */ xwris kodika profanws
       		//multiCommentLines +=1;
-	 		println("Skata8: <i>");
+	 		//println("Skata8: <i>");
 	 		int e;
 	 	}
 	 	
@@ -186,13 +186,13 @@ list[str] getLOC(list[str] src) {
 	 	//else if  (/^[^\w]*\/\*[^\*\/]*$/ :=  i ) {		// pianei ta /* ...............
 	 	  else if  (/^[^\w]*\/\*/ :=  i ) {	
 	 	    if (/\*\//:= i) {
-	 	    	println("skata9");
+	 	    	//println("skata9");
 	 	    	int f;
 	 	    }
 	 	    else {
 	 		commentOpened = true;
 	 		//multiCommentLines +=1;
-	 		println("skata10");
+	 		//println("skata10");
 	 		}
 	 		//println("<i>");
 	 	}
@@ -200,14 +200,14 @@ list[str] getLOC(list[str] src) {
 	 	
 	 	else if (/^[^\w]*\*.*\*\/[\s\t\n]*$/ := i) {	// pianei ta * .... */ xwris kodika profanws
       		//multiCommentLines +=1;
-	 		println("Skata11:");
+	 		//println("Skata11:");
 	 		int g;
 	 	}
 	 		
 	   	//else if(/[\s\t\n]*\/\// := i)	//	--> sigoura lathos		**** ME AYTO VELTIWNETAI TO MIKRO...
       	else if (/^[^\w}{;]*\/\// := i)	{	// ---> 24643... seems right but wtf?
       		// singleCommentLines +=1;
-      		println("Skata12");
+      		//println("Skata12");
       		int h;
       	}
       	else 			// CODE BITCH!

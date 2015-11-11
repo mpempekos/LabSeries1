@@ -21,12 +21,18 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	str unitSizeRating = "?";	
 	str complexityRating = "?";	
 
-	//M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
-	M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);	
+	println("creating M3 model...");
+	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
+	//M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);
+	println("M3 model created");		
 	myMethods = methods(myModel);		
 	list[loc] methodsLocs = toList(myMethods);
 	
-	for(loc methodLoc <- methodsLocs) {					
+	int totalNumbMethods = size(methodsLocs);
+	int currentAnalizedMethod = 0;
+	
+	for(loc methodLoc <- methodsLocs) {	
+		println("Analyzed <currentAnalizedMethod> out of <totalNumbMethods> methods");				
 		methodLines = readFileLines(methodLoc);			
 		list[str] methodLOC = getLOC(methodLines);	
 				
@@ -47,7 +53,7 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 			else {
 				us_moderateRiskLOC += methodSize; 
 			}
-		}
+		}		
 		
 		// Complexity Metric
 		mcc = checkMethodCyclomaticComplexity(getMethodASTEclipse(methodLoc, model=myModel));		
@@ -65,6 +71,7 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 				cc_moderateRiskLOC += size(methodLOC); 
 			}
 		}
+		currentAnalizedMethod += 1;
 	}
 	
 	println("allLOC: <allLOC>");	
