@@ -22,8 +22,8 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	str complexityRating = "?";	
 
 	println("creating M3 model...");
-	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
-	//M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);
+	//M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
+	M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);
 	println("M3 model created");		
 	myMethods = methods(myModel);		
 	list[loc] methodsLocs = toList(myMethods);

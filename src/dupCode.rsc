@@ -7,6 +7,7 @@ import IO;
 import Set;
 import List;
 import String;
+import Map;
 import util::Resources;
 
 // currently being tested with project "softEvolTest"
@@ -214,4 +215,38 @@ list[str] getLOC(list[str] src) {
       		pureList+=i;
      }
     return pureList;
+}
+
+str getPureCode(str uncleanLine) {	
+	trimLine = replaceAll(uncleanLine,"\t","");
+	line = replaceAll(trimLine," ","");		
+	
+	if (/^\/\// := line) {          // case: "// ghkomnyt"
+		return "";	
+	} 
+	
+	else if (/\/\/.*$/ := line) {			
+		return line[..findFirst(line,"//")];	
+	} 
+	
+	else if (/\/\*/ := line)  {		
+		if (findFirst(line, "*/") == -1) {			
+			return "";
+		} 
+		else {		
+			if(/.+\/\*.*\*\/.+/ := line) {
+				line = line[..findFirst(line, "/*")] + line[findFirst(line, "*/")+2..];
+			}
+			else if(/^\/\*.*\*\/.*/ := line) {
+				line = line[findFirst(line, "*/")+2..];
+			} 
+			else {// (/.*\/\*.*\*\/$/ := line) 			
+				line = line[..findFirst(line, "/*")];
+			} 																
+			return getPureCode(line);		
+		}		 
+	}	 
+	else {
+		return line;
+	}
 }
