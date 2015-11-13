@@ -8,20 +8,51 @@ import lang::java::jdt::m3::Core;
 import String;
 import Set;
 
-/*** @Andre...So far works pretty nice and i like it...take a look...
-so far it's ok for simple cases, as u asked...recursion works ok if u have an open comment,
-and also works ok to catch an empty line or a single line comment... 2nd boolean is not
-needed...all we have to do in the main method is to check if the string returned is
-empty or not....the method will be completed tomorrow....;)
-***/
-
 
 data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 
+void countLines() {
+	//loc project = |project://TestProject2|;
+    //loc project = |project://hsqldb-2.3.1|;
+    loc project = |project://smallsql0.21_src|;
+	myProject = getProject(project);
+	
+	linesOfCode = 0;
+	myCustomVar = customVarInit("","",false); 
+
+	visit (myProject) {
+		case file(loc id): {
+		
+				if (id.path[-4..] == "java") {
+					sourceCode = readFileLines(id);
+					
+					for(i <- sourceCode) {
+					
+						myCustomVar.line = i;
+						myCustomVar.pureLine = "";
+						myCustomVar = getPureCode(myCustomVar);
+						
+						if (!isEmpty(myCustomVar.pureLine)) {
+							linesOfCode += 1;
+							//println("Pure line is: <myCustomVar.pureLine>");
+						}
+					}
+				}
+				
+		}
+   }
+   println("*** Lines Of Code are <linesOfCode> ****");
+}
+
+str replaceTabsSpaces(str line) {
+		tabsRemoved = replaceAll(line,"\t","");
+		spacesRemoved = replaceAll(tabsRemoved," ","");
+		return spacesRemoved; 
+}
 
 CustomVar getPureCode (CustomVar var) {
 	
-	//int a; /* ****/   int b; 
+	//int a; /* ****/   int b; 	//////////// /* //     */
 	
 	if (var.isCommentOpened) {
 		
@@ -31,19 +62,31 @@ CustomVar getPureCode (CustomVar var) {
 			return getPureCode(var);	
 		}
 		
-		else 
+		else {
+			var.pureLine = replaceTabsSpaces(var.pureLine);
 			return var ;
+		}
 		
 	}
 	
 	
 	else {		// no open comment...
-	
-		if(/^[ \t\r\n\s]*$/ := var.line)	// blank line//
+		
+		if(/^[ \t\r\n\s]*$/ := var.line) {	// blank line
+			var.pureLine = replaceTabsSpaces(var.pureLine);
 			return var;
+		}
 			
-		else if (/^[\t\r\n\s]*[\/\/]/ := var.line)	// single comment//
-			return ("":commentOpened);
+		else if (/^[\t\r\n\s]*\/\// := var.line) {	// single comment in the beginning
+			var.pureLine = replaceTabsSpaces(var.pureLine);
+			return var;
+		}
+			
+		else if (/\/\// := var.line) {				// single comment somewhere in the middle
+			var.pureLine += var.line[..findFirst(var.line,"//")];
+			var.pureLine = replaceTabsSpaces(var.pureLine);
+			return var;
+		}
 			
 		else if (/\/\*/ := var.line) {				// a comment opens
 			
@@ -53,7 +96,11 @@ CustomVar getPureCode (CustomVar var) {
 			return getPureCode(var);
 		}
 			
-		else 	// so far so good.....
+		else { 	// so far so good.....
+			var.pureLine += var.line;
+			var.pureLine = replaceTabsSpaces(var.pureLine);
 			return var;
+		}
 	}
+	
 }

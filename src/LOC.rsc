@@ -13,9 +13,9 @@ import String;
 
 
 void cloc() {
-	//loc project = |project://TestProject2|;
+	loc project = |project://TestProject2|;
     //loc project = |project://hsqldb-2.3.1|;
-    loc project = |project://smallsql0.21_src|;
+    //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	linesOfCode = 0; comments = 0;	blankLines = 0;
