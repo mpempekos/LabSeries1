@@ -12,36 +12,62 @@ import Set;
 data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 
 void countLines() {
+	
+	set[int] dupLines = {};
+	
+	//loc project = |project://softEvolTest|;
 	//loc project = |project://TestProject2|;
     //loc project = |project://hsqldb-2.3.1|;
     loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
-	linesOfCode = 0;
+	list [str] pureCode = [];
 	myCustomVar = customVarInit("","",false); 
 
 	visit (myProject) {
 		case file(loc id): {
 		
-				if (id.path[-4..] == "java") {
-					sourceCode = readFileLines(id);
+			if (id.path[-4..] == "java") {
+				sourceCode = readFileLines(id);
+				
+				for(i <- sourceCode) {
+				
+					myCustomVar.line = i;
+					myCustomVar.pureLine = "";
+					myCustomVar = getPureCode(myCustomVar);
 					
-					for(i <- sourceCode) {
-					
-						myCustomVar.line = i;
-						myCustomVar.pureLine = "";
-						myCustomVar = getPureCode(myCustomVar);
-						
-						if (!isEmpty(myCustomVar.pureLine)) {
-							linesOfCode += 1;
-							//println("Pure line is: <myCustomVar.pureLine>");
-						}
+					if (!isEmpty(myCustomVar.pureLine)) {
+						pureCode += myCustomVar.pureLine;
+						//println("Pure line is: <myCustomVar.pureLine>");
 					}
 				}
-				
+			}				
 		}
-   }
-   println("*** Lines Of Code are <linesOfCode> ****");
+    }   
+    
+    int allLOC = size(pureCode);
+	
+	println("ckecking for duplicated code...");	
+	for(int i <- [0..size(pureCode)]) {
+		if(i notin dupLines) {
+			for(int j <- [i+1..size(pureCode)]) {				
+				if(pureCode[i] == pureCode[j]) {
+					//println("equal lines found: <pureCode[i]> == <pureCode[j]>");	
+					dupFound = checkFor2EqualBlocks(pureCode, i, j);
+					if (dupFound >= 6) {						
+						for(int k <- [0..dupFound]) {												
+							dupLines = dupLines + (i+k);
+							dupLines = dupLines + (j+k);			
+						}
+						println("Duplicated lines (so far): <size(dupLines)>/<allLOC> found");
+					}
+				}			
+			}
+		}			
+	}	
+	
+	println("number of duplicated lines: <size(dupLines)>");
+   	println("*** Lines Of Code are <allLOC> ****");
 }
 
 str replaceTabsSpaces(str line) {
@@ -103,4 +129,16 @@ CustomVar getPureCode (CustomVar var) {
 		}
 	}
 	
+}
+
+
+int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
+	int count = 1;
+	for(int k <- [1..size(codeLines)-j]) {								
+		if (codeLines[i+k] != codeLines[j+k]) {		
+			return count;
+		}		
+		count = count + 1;
+	}
+	return count;
 }
