@@ -17,6 +17,7 @@ void numbDuplicatedLines() {
 	list[str] pureCode = [];
 	int i = 1;
 			
+	//loc project = |project://softEvolTest|;
     loc project = |project://smallsql0.21_src|;
     //loc project = |project://hsqldb-2.3.1|;
 	myProject = getProject(project);
@@ -25,7 +26,7 @@ void numbDuplicatedLines() {
 	visit (myProject) {		
 		case file(loc id): {			
 			pureCode += checkIfJavaFile(id);			
-			println("<i> java files. Pure code added");
+			println("<i> files analyzed");
 			i+= 1;
 		}
     }    
@@ -62,8 +63,9 @@ list[str] checkIfJavaFile(loc id) {
 		for(line <- fileLines) {			
 			pureLine = getPureCode(line);
 			if (size(pureLine) > 0) linesOfCode += pureLine; 	
-		}	
+		}			
 		return linesOfCode;
+		return fileLines;
 	}
 	else return [];
 }
