@@ -221,13 +221,9 @@ str getPureCode(str uncleanLine) {
 	trimLine = replaceAll(uncleanLine,"\t","");
 	line = replaceAll(trimLine," ","");		
 	
-	if (/^\/\// := line) {          // case: "// ghkomnyt"
+	if (/^\/\// := line) {          
 		return "";	
-	} 
-	
-	else if (/\/\/.*$/ := line) {			
-		return line[..findFirst(line,"//")];	
-	} 
+	} 	
 	
 	else if (/\/\*/ := line)  {		
 		if (findFirst(line, "*/") == -1) {			
@@ -245,7 +241,16 @@ str getPureCode(str uncleanLine) {
 			} 																
 			return getPureCode(line);		
 		}		 
-	}	 
+	}	
+	
+	else if (/\*\// := line) {
+		return getPureCode(line[findFirst(line, "*/")+2..]);
+	} 
+	
+	else if (/\/\/.*$/ := line) {			
+		return line[..findFirst(line,"//")];	
+	} 
+	
 	else {
 		return line;
 	}
