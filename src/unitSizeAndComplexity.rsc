@@ -166,6 +166,9 @@ int checkMethodCyclomaticComplexity(Declaration methodAST) {
 	return cc;
 }
 
+// problem: /*      "int a;" is considered line of code
+//			int a;
+//			*/
 str getPureCode(str uncleanLine) {	
 	trimLine = replaceAll(uncleanLine,"\t","");
 	line = replaceAll(trimLine," ","");		
