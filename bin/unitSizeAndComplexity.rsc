@@ -8,7 +8,6 @@ import IO;
 import Set;
 import List;
 import String;
-import dupCode;
 
 void checkUnitSizeANDcheckCyclomaticComplexity() {
 	real us_moderateRiskLOC = 0.0;
@@ -22,8 +21,8 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	str complexityRating = "?";	
 
 	println("creating M3 model...");
-	//M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
-	M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);
+	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
+	//M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);
 	println("M3 model created");		
 	myMethods = methods(myModel);		
 	list[loc] methodsLocs = toList(myMethods);
@@ -33,8 +32,13 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	
 	for(loc methodLoc <- methodsLocs) {	
 		println("Analyzed <currentAnalizedMethod> out of <totalNumbMethods> methods");				
-		methodLines = readFileLines(methodLoc);			
-		list[str] methodLOC = getLOC(methodLines);	
+		methodLines = readFileLines(methodLoc);	
+		
+		list[str] methodLOC = [];			
+		for(line <- methodLines) {		
+			pureLine = getPureCode(line);
+			if (size(pureLine) > 0) methodLOC += pureLine; 	
+		}		
 				
 		allLOC += size(methodLOC);	
 		
@@ -160,5 +164,36 @@ int checkMethodCyclomaticComplexity(Declaration methodAST) {
    	};
    	   	    	  	
 	return cc;
+}
+
+str getPureCode(str uncleanLine) {	
+	trimLine = replaceAll(uncleanLine,"\t","");
+	line = replaceAll(trimLine," ","");		
+	
+	if (/^\/\// := line) return ""; // "// jiuvuyb"
+			
+	else if (/\/\*/ := line)  { // contains "/*"
+				
+		if (findFirst(line, "*/") == -1) return ""; // doesn't contain "*/"
+		
+		else {
+				
+			if(/.+\/\*.*\*\/.+/ := line) { // "jneigneijn /* hbuerv */ iuhriurgu"
+				line = line[..findFirst(line, "/*")] + line[findFirst(line, "*/")+2..];
+			}
+			
+			else if(/^\/\*.*\*\/.*/ := line) line = line[findFirst(line, "*/")+2..];
+		
+			else line = line[..findFirst(line, "/*")]; // (/.*\/\*.*\*\/$/ := line)
+																	
+			return line; //getPureCode(line);		
+		}		 
+	}	
+	
+	else if (/\*\// := line) return line[findFirst(line, "*/")+2..]; //getPureCode(line[findFirst(line, "*/")+2..]);	
+	
+	else if (/\/\/.*$/ := line) return line[..findFirst(line,"//")];	
+	
+	else return line;
 }
 
