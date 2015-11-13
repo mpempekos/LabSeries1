@@ -15,34 +15,45 @@ needed...all we have to do in the main method is to check if the string returned
 empty or not....the method will be completed tomorrow....;)
 ***/
 
-map[str,bool] getPureCode (map[str,bool] args) {
-	commentOpened = head ([args[k] | k <- args]);
-	line = head( [k| _:k <- args]);
-	//println("I have string <line> and bool <commentOpened>");
+
+data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
+
+
+CustomVar getPureCode (CustomVar var) {
 	
-	if (commentOpened) {
+	//int a; /* ****/   int b; 
+	
+	if (var.isCommentOpened) {
 		
-		if (/\*\// := line) {		// comment is terminated in this line
-		
-			line = line[findFirst(line,"*/")+2..];
-			commentOpened = false;
-			return getPureCode((line:commentOpened));	
+		if (/\*\// := var.line) {		// comment is terminated in this line
+			var.line = var.line[findFirst(var.line,"*/")+2..];
+			var.isCommentOpened = false;
+			return getPureCode(var);	
 		}
 		
 		else 
-			return ("":commentOpened);
+			return var ;
 		
 	}
 	
+	
 	else {		// no open comment...
 	
-		if(/^[ \t\r\n\s]*$/ := line)	// blank line
+		if(/^[ \t\r\n\s]*$/ := var.line)	// blank line//
+			return var;
+			
+		else if (/^[\t\r\n\s]*[\/\/]/ := var.line)	// single comment//
 			return ("":commentOpened);
 			
-		else if (/^[\t\r\n\s]*[\/\/]/ := line)	// single comment
-			return ("":commentOpened);
+		else if (/\/\*/ := var.line) {				// a comment opens
 			
-		else 
-			return (line:commentOpened);	// for now just return line...
+			var.pureLine += var.line[..findFirst(var.line,"/*")];
+			var.isCommentOpened = true;
+			var.line = var.line[findFirst(var.line,"/*")+2..];
+			return getPureCode(var);
+		}
+			
+		else 	// so far so good.....
+			return var;
 	}
 }
