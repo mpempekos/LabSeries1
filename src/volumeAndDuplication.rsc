@@ -1,4 +1,4 @@
-module finalVolume
+module volumeAndDuplication
 
 import util::Resources;
 import IO;
