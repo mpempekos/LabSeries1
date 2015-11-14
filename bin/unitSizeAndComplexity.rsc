@@ -7,6 +7,8 @@ import analysis::m3::AST;
 import IO;
 import Set;
 import List;
+import finalVolume;
+import util::Resources;
 import String;
 
 void checkUnitSizeANDcheckCyclomaticComplexity() {
@@ -19,6 +21,7 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	real allLOC = 0.0;	
 	str unitSizeRating = "?";	
 	str complexityRating = "?";	
+	myCustomVar = customVarInit("","",false);
 
 	println("creating M3 model...");
 	M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
@@ -35,10 +38,15 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 		methodLines = readFileLines(methodLoc);	
 		
 		list[str] methodLOC = [];			
-		for(line <- methodLines) {		
-			pureLine = getPureCode(line);
-			if (size(pureLine) > 0) methodLOC += pureLine; 	
-		}		
+		for(line <- methodLines) {	
+			myCustomVar.line = line;
+			myCustomVar.pureLine = "";
+			myCustomVar = getPureCode(myCustomVar);
+			
+			if (!isEmpty(myCustomVar.pureLine)) {
+				methodLOC += myCustomVar.pureLine;				
+			}													
+		}					
 				
 		allLOC += size(methodLOC);	
 		
@@ -137,16 +145,6 @@ str calculateRating(real moderateRiskLOC, real highRiskLOC, real veryhighRiskLOC
 	return rating;
 }
 
-/* 
- * Cyclomatic Complexity of a Method: Number of decision points + number of logical operators + 1
- *
- * 		decision points: if, else, cases, loop, etc
- *		logical operators: || and &&
- *	
- *
- * TODO: consider number of logical operators as well?
- *
-*/
 int checkMethodCyclomaticComplexity(Declaration methodAST) {
 	
 	int cc = 1;	
@@ -164,39 +162,5 @@ int checkMethodCyclomaticComplexity(Declaration methodAST) {
    	};
    	   	    	  	
 	return cc;
-}
-
-// problem: /*      "int a;" is considered line of code
-//			int a;
-//			*/
-str getPureCode(str uncleanLine) {	
-	trimLine = replaceAll(uncleanLine,"\t","");
-	line = replaceAll(trimLine," ","");		
-	
-	if (/^\/\// := line) return ""; // "// jiuvuyb"
-			
-	else if (/\/\*/ := line)  { // contains "/*"
-				
-		if (findFirst(line, "*/") == -1) return ""; // doesn't contain "*/"
-		
-		else {
-				
-			if(/.+\/\*.*\*\/.+/ := line) { // "jneigneijn /* hbuerv */ iuhriurgu"
-				line = line[..findFirst(line, "/*")] + line[findFirst(line, "*/")+2..];
-			}
-			
-			else if(/^\/\*.*\*\/.*/ := line) line = line[findFirst(line, "*/")+2..];
-		
-			else line = line[..findFirst(line, "/*")]; // (/.*\/\*.*\*\/$/ := line)
-																	
-			return line; //getPureCode(line);		
-		}		 
-	}	
-	
-	else if (/\*\// := line) return line[findFirst(line, "*/")+2..]; //getPureCode(line[findFirst(line, "*/")+2..]);	
-	
-	else if (/\/\/.*$/ := line) return line[..findFirst(line,"//")];	
-	
-	else return line;
 }
 
