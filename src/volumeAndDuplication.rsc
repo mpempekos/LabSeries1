@@ -12,13 +12,12 @@ import Set;
 data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 
 void countLines() {
-	loc project = |project://TestProject2|;
 	
 	set[int] dupLines = {};
 	int linesOfCode = 0;
 	
-	loc project = |project://TestProject|;
-    //loc project = |project://hsqldb-2.3.1|;
+	//loc project = |project://TestProject|;
+    loc project = |project://hsqldb-2.3.1|;
     //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
@@ -37,14 +36,6 @@ void countLines() {
 					myCustomVar.pureLine = "";
 					myCustomVar = getPureCode(myCustomVar);
 					
-						myCustomVar.line = i;
-						myCustomVar.pureLine = "";
-						myCustomVar = getPureCode(myCustomVar);
-						
-						if (!isEmpty(myCustomVar.pureLine)) {
-							linesOfCode += 1;
-							println("Pure line is: <myCustomVar.pureLine>");
-						}
 					if (!isEmpty(myCustomVar.pureLine)) {
 						pureCode += myCustomVar.pureLine;
 						//println("Pure line is: <myCustomVar.pureLine>");
@@ -57,7 +48,12 @@ void countLines() {
     
     //int allLOC = size(pureCode); //Y THE FUCK U DO DIS??????
     
+    println("****************");
+	println("VOLUME METRIC");
+	println("****************");
+    
     println("*** Lines Of Code are <linesOfCode> ****");
+    println("Volume rating:<getVolumeRating(linesOfCode)> ");
     	
 	println("ckecking for duplicated code...");	
 	//for(int i <- [0..size(pureCode)]) {
@@ -144,6 +140,25 @@ CustomVar getPureCode (CustomVar var) {
 		}
 	}
 	
+}
+
+str getVolumeRating(int linesOfCode) {
+	if (linesOfCode < 66000)
+		return "++";
+		
+	else if (linesOfCode < 246000)
+		return "+";
+		
+	else if (linesOfCode < 665000)
+		return "o";
+		
+	else if (linesOfCode < 665000)
+		return "o";
+		
+	else if (linesOfCode < 1310000)
+		return "-";
+		
+	else return "--";
 }
 
 
