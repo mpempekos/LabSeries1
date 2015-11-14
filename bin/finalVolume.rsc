@@ -12,9 +12,9 @@ import Set;
 data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 
 void countLines() {
-	//loc project = |project://TestProject2|;
+	loc project = |project://TestProject2|;
     //loc project = |project://hsqldb-2.3.1|;
-    loc project = |project://smallsql0.21_src|;
+    //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	linesOfCode = 0;
@@ -34,7 +34,7 @@ void countLines() {
 						
 						if (!isEmpty(myCustomVar.pureLine)) {
 							linesOfCode += 1;
-							//println("Pure line is: <myCustomVar.pureLine>");
+							println("Pure line is: <myCustomVar.pureLine>");
 						}
 					}
 				}
