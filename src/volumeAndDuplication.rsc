@@ -16,7 +16,7 @@ void countLines() {
 	set[int] dupLines = {};
 	int linesOfCode = 0;
 	
-	//loc project = |project://TestProject|;
+	//loc project = |project://TestProject2|;
     loc project = |project://hsqldb-2.3.1|;
     //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
@@ -120,7 +120,10 @@ CustomVar getPureCode (CustomVar var) {
 		}
 			
 		else if (/\/\// := var.line) {				// single comment somewhere in the middle
-			var.pureLine += var.line[..findFirst(var.line,"//")];
+			
+			//var.pureLine += var.line[..findFirst(var.line,"//")];
+			var.line = var.line[..findFirst(var.line,"//")];
+			var.pureLine += getPureCode(var).pureLine;
 			var.pureLine = replaceTabsSpaces(var.pureLine);
 			return var;
 		}
