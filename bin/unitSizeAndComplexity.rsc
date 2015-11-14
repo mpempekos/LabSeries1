@@ -44,8 +44,7 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 			myCustomVar = getPureCode(myCustomVar);
 			
 			if (!isEmpty(myCustomVar.pureLine)) {
-				methodLOC += myCustomVar.pureLine;
-				//println("Pure line is: <myCustomVar.pureLine>");
+				methodLOC += myCustomVar.pureLine;				
 			}													
 		}					
 				
@@ -146,16 +145,6 @@ str calculateRating(real moderateRiskLOC, real highRiskLOC, real veryhighRiskLOC
 	return rating;
 }
 
-/* 
- * Cyclomatic Complexity of a Method: Number of decision points + number of logical operators + 1
- *
- * 		decision points: if, else, cases, loop, etc
- *		logical operators: || and &&
- *	
- *
- * TODO: consider number of logical operators as well?
- *
-*/
 int checkMethodCyclomaticComplexity(Declaration methodAST) {
 	
 	int cc = 1;	

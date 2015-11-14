@@ -14,11 +14,11 @@ data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 void countLines() {
 	
 	set[int] dupLines = {};
+	int linesOfCode = 0;
 	
-	//loc project = |project://softEvolTest|;
-	//loc project = |project://TestProject2|;
+	loc project = |project://TestProject|;
     //loc project = |project://hsqldb-2.3.1|;
-    loc project = |project://smallsql0.21_src|;
+    //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	list [str] pureCode = [];
@@ -39,18 +39,23 @@ void countLines() {
 					if (!isEmpty(myCustomVar.pureLine)) {
 						pureCode += myCustomVar.pureLine;
 						//println("Pure line is: <myCustomVar.pureLine>");
+						linesOfCode += 1;
 					}
 				}
 			}				
 		}
     }   
     
-    int allLOC = size(pureCode);
-	
+    //int allLOC = size(pureCode); //Y THE FUCK U DO DIS??????
+    
+    println("*** Lines Of Code are <linesOfCode> ****");
+    	
 	println("ckecking for duplicated code...");	
-	for(int i <- [0..size(pureCode)]) {
+	//for(int i <- [0..size(pureCode)]) {
+	for(int i <- [0..linesOfCode]) {
 		if(i notin dupLines) {
-			for(int j <- [i+1..size(pureCode)]) {				
+			//for(int j <- [i+1..size(pureCode)]) {
+			for(int j <- [i+1..linesOfCode]) {				
 				if(pureCode[i] == pureCode[j]) {
 					//println("equal lines found: <pureCode[i]> == <pureCode[j]>");	
 					dupFound = checkFor2EqualBlocks(pureCode, i, j);
@@ -59,7 +64,7 @@ void countLines() {
 							dupLines = dupLines + (i+k);
 							dupLines = dupLines + (j+k);			
 						}
-						println("Duplicated lines (so far): <size(dupLines)>/<allLOC> found");
+						//println("Duplicated lines (so far): <size(dupLines)>/<allLOC> found");
 					}
 				}			
 			}
@@ -67,7 +72,8 @@ void countLines() {
 	}	
 	
 	println("number of duplicated lines: <size(dupLines)>");
-   	println("*** Lines Of Code are <allLOC> ****");
+   	//println("*** Lines Of Code are <allLOC> ****");
+   	println("*** Lines Of Code are <linesOfCode> ****");
 }
 
 str replaceTabsSpaces(str line) {
