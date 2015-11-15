@@ -17,8 +17,8 @@ void countLines() {
 	int linesOfCode = 0;
 	
 	//loc project = |project://TestProject2|;
-    loc project = |project://hsqldb-2.3.1|;
-    //loc project = |project://smallsql0.21_src|;
+    //loc project = |project://hsqldb-2.3.1|;
+    loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	list [str] pureCode = [];
