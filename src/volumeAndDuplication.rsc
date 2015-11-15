@@ -16,7 +16,7 @@ void countLines() {
 	set[int] dupLines = {};
 	int linesOfCode = 0;
 	
-	//loc project = |project://TestProject2|;
+	//loc project = |project://softEvolTest|;
     //loc project = |project://hsqldb-2.3.1|;
     loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
@@ -24,6 +24,7 @@ void countLines() {
 	list [str] pureCode = [];
 	myCustomVar = customVarInit("","",false); 
 
+	println("visiting project...");
 	visit (myProject) {
 		case file(loc id): {
 		
@@ -37,49 +38,76 @@ void countLines() {
 					myCustomVar = getPureCode(myCustomVar);
 					
 					if (!isEmpty(myCustomVar.pureLine)) {
-						pureCode += myCustomVar.pureLine;
-						//println("Pure line is: <myCustomVar.pureLine>");
+						pureCode += myCustomVar.pureLine;						
 						linesOfCode += 1;
 					}
 				}
 			}				
 		}
-    }   
+    }          
     
-    //int allLOC = size(pureCode); //Y THE FUCK U DO DIS??????
-    
-    println("****************");
+    println("*************");
 	println("VOLUME METRIC");
-	println("****************");
+	println("*************");
     
-    println("*** Lines Of Code are <linesOfCode> ****");
-    println("Volume rating:<getVolumeRating(linesOfCode)> ");
-    	
+    println("LOC: <linesOfCode>");
+    println("Volume rating:<getVolumeRating(linesOfCode)> ");    
 	println("ckecking for duplicated code...");	
-	//for(int i <- [0..size(pureCode)]) {
+	println("Duplicated lines (so far): <size(dupLines)>/<linesOfCode> found");	
 	for(int i <- [0..linesOfCode]) {
-		if(i notin dupLines) {
-			//for(int j <- [i+1..size(pureCode)]) {
+		if(i notin dupLines) {			
 			for(int j <- [i+1..linesOfCode]) {				
-				if(pureCode[i] == pureCode[j]) {
-					//println("equal lines found: <pureCode[i]> == <pureCode[j]>");	
-					dupFound = checkFor2EqualBlocks(pureCode, i, j);
+				if(pureCode[i] == pureCode[j]) {					
+					dupFound = checkFor2EqualBlocks(pureCode, i, j, linesOfCode);
 					if (dupFound >= 6) {						
 						for(int k <- [0..dupFound]) {												
-							dupLines = dupLines + (i+k);
-							dupLines = dupLines + (j+k);			
+							dupLines += (i+k);
+							dupLines += (j+k);			
 						}
-						//println("Duplicated lines (so far): <size(dupLines)>/<allLOC> found");
+						println("Duplicated lines (so far): <size(dupLines)>/<linesOfCode> found | i:<i>, j:<j>");
 					}
 				}			
 			}
 		}			
 	}	
 	
-	println("number of duplicated lines: <size(dupLines)>");
-   	//println("*** Lines Of Code are <allLOC> ****");
-   	println("*** Lines Of Code are <linesOfCode> ****");
+	real duplicatedLOC = size(dupLines) + 0.0;	
+	
+	println("******************");
+	println("DUPLICATION METRIC");
+	println("******************");	
+	
+	println("Number of duplicated lines: <duplicatedLOC>"); 
+	println("Percentage of duplicated lines: <(duplicatedLOC / linesOfCode) * 100>%"); 
+	println("Duplication rating:<getDuplicationRating(linesOfCode, duplicatedLOC)> "); 	
+	  	
+   	println("*************");
+	println("VOLUME METRIC");
+	println("*************");
+    
+    println("LOC: <linesOfCode>");
+    println("Volume rating:<getVolumeRating(linesOfCode)> ");
 }
+
+str getDuplicationRating (int linesOfCode, real duplicatedLOC) {
+	
+	real percentage = (duplicatedLOC / linesOfCode)*100;
+	
+	if (percentage <= 3)
+		return "++";
+		
+	else if (percentage <= 5)
+		return "+";
+		
+	else if (percentage <= 10)
+		return "o";		
+		
+	else if (percentage <= 20)
+		return "-";
+		
+	else return "--";
+}
+
 
 str replaceTabsSpaces(str line) {
 		tabsRemoved = replaceAll(line,"\t","");
@@ -153,10 +181,7 @@ str getVolumeRating(int linesOfCode) {
 		return "+";
 		
 	else if (linesOfCode < 665000)
-		return "o";
-		
-	else if (linesOfCode < 665000)
-		return "o";
+		return "o";		
 		
 	else if (linesOfCode < 1310000)
 		return "-";
@@ -165,9 +190,9 @@ str getVolumeRating(int linesOfCode) {
 }
 
 
-int checkFor2EqualBlocks(list[str] codeLines, int i, int j) {
+int checkFor2EqualBlocks(list[str] codeLines, int i, int j, int linesOfCode) {
 	int count = 1;
-	for(int k <- [1..size(codeLines)-j]) {								
+	for(int k <- [1..linesOfCode-j]) {								
 		if (codeLines[i+k] != codeLines[j+k]) {		
 			return count;
 		}		

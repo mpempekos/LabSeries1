@@ -7,9 +7,9 @@ import analysis::m3::AST;
 import IO;
 import Set;
 import List;
-import finalVolume;
 import util::Resources;
 import String;
+import volumeAndDuplication;
 
 void checkUnitSizeANDcheckCyclomaticComplexity() {
 	real us_moderateRiskLOC = 0.0;
