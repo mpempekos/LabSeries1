@@ -16,7 +16,7 @@ void countLines() {
 	set[int] dupLines = {};
 	int linesOfCode = 0;
 	
-	//loc project = |project://softEvolTest|;
+	//loc project = |project://TestProject|;
     //loc project = |project://hsqldb-2.3.1|;
     loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
@@ -55,10 +55,16 @@ void countLines() {
 	println("ckecking for duplicated code...");	
 	println("Duplicated lines (so far): <size(dupLines)>/<linesOfCode> found");	
 	for(int i <- [0..linesOfCode]) {
-		if(i notin dupLines) {			
-			for(int j <- [i+1..linesOfCode]) {				
-				if(pureCode[i] == pureCode[j]) {					
+		
+		if ((i notin dupLines) && (i+5 notin dupLines)) {
+			for(int j <- [i+1..linesOfCode]) {
+				if ((j notin dupLines) && (j+5 notin dupLines)) {
+				//println("Checking <pureCode[i]> and <pureCode[j]>");
+				//println("Positions: <i> and <j>");
+				if(pureCode[i] == pureCode[j]) {
+					//println("equal lines found: <pureCode[i]> == <pureCode[j]>");	
 					dupFound = checkFor2EqualBlocks(pureCode, i, j, linesOfCode);
+					
 					if (dupFound >= 6) {						
 						for(int k <- [0..dupFound]) {												
 							dupLines += (i+k);
@@ -66,6 +72,7 @@ void countLines() {
 						}
 						println("Duplicated lines (so far): <size(dupLines)>/<linesOfCode> found | i:<i>, j:<j>");
 					}
+				}
 				}			
 			}
 		}			
