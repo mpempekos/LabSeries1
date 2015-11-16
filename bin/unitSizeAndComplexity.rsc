@@ -11,7 +11,7 @@ import util::Resources;
 import String;
 import volumeAndDuplication;
 
-void checkUnitSizeANDcheckCyclomaticComplexity() {
+list[str] checkUnitSizeAndCyclomaticComplexity(loc project) {
 	real us_moderateRiskLOC = 0.0;
 	real us_highRiskLOC = 0.0;	
 	real us_veryhighRiskLOC = 0.0;
@@ -25,7 +25,7 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 
 	println("creating M3 model...");
 	//M3 myModel = createM3FromEclipseProject(|project://smallsql0.21_src|);	
-	M3 myModel = createM3FromEclipseProject(|project://hsqldb-2.3.1|);
+	M3 myModel = createM3FromEclipseProject(project);
 	println("M3 model created");		
 	myMethods = methods(myModel);		
 	list[loc] methodsLocs = toList(myMethods);
@@ -109,6 +109,8 @@ void checkUnitSizeANDcheckCyclomaticComplexity() {
 	
 	complexityRating = calculateRating(cc_moderateRiskLOC, cc_highRiskLOC, cc_veryhighRiskLOC, allLOC);	
 	println("Cyclomatic Complexity rating: <unitSizeRating>");	
+	
+	return [unitSizeRating,complexityRating];
 }
 
 str calculateRating(real moderateRiskLOC, real highRiskLOC, real veryhighRiskLOC, real allLOC) {

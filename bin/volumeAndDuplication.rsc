@@ -11,14 +11,14 @@ import Set;
 
 data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 
-void countLines() {
+list[str] checkVolumeAndDuplication(loc project) {
 	
 	set[int] dupLines = {};
 	int linesOfCode = 0;
 	
 	//loc project = |project://TestProject|;
     //loc project = |project://hsqldb-2.3.1|;
-    loc project = |project://smallsql0.21_src|;
+    //loc project = |project://smallsql0.21_src|;
 	myProject = getProject(project);
 	
 	list [str] pureCode = [];
@@ -85,15 +85,19 @@ void countLines() {
 	println("******************");	
 	
 	println("Number of duplicated lines: <duplicatedLOC>"); 
-	println("Percentage of duplicated lines: <(duplicatedLOC / linesOfCode) * 100>%"); 
-	println("Duplication rating:<getDuplicationRating(linesOfCode, duplicatedLOC)> "); 	
+	println("Percentage of duplicated lines: <(duplicatedLOC / linesOfCode) * 100>%");
+	duplicationRating = getDuplicationRating(linesOfCode, duplicatedLOC); 
+	println("Duplication rating: <duplicationRating>"); 	
 	  	
    	println("*************");
 	println("VOLUME METRIC");
 	println("*************");
     
     println("LOC: <linesOfCode>");
-    println("Volume rating:<getVolumeRating(linesOfCode)> ");
+    volumeRating = getVolumeRating(linesOfCode);
+    println("Volume rating: <volumeRating>");
+    
+    return [volumeRating, duplicationRating];
 }
 
 str getDuplicationRating (int linesOfCode, real duplicatedLOC) {
