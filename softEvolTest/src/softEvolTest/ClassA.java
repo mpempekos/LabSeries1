@@ -1,6 +1,5 @@
-package softEvolTest;
 
-public class Class1 {
+public class ClassA {
 	private int a;
 	private int b;
 	
@@ -19,14 +18,4 @@ public class Class1 {
 		System.out.println(this.a + "+" + this.b + "=");		
 		return this.a + this.b;
 	}
-	
-	public void complex(int a, int b) {
-		if(a == 1) {
-			b = 1;
-		}
-		else {
-			return;
-		}
-	}
-	
 }
