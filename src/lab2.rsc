@@ -18,13 +18,16 @@ void run() {
 	
 	visit(projectAST) {
 		// MassThreshold number???		
-		case node t: if(treeMass(t) >= 3) {
+		case node t: if(treeMass(t) >= 2) {
 			if(t in buckets && buckets[t] != []) {
 				buckets[t] += t;
 			}
 			else {
-				buckets[t] = [t];
+				buckets[t] = [t];				
 			}
+			//if (size(buckets[t]) == 2) {
+				//iprintln(buckets[t]);
+			//}
 			iprintln(size(buckets[t]));
 			println("++++++++++");					
 		}
@@ -40,7 +43,7 @@ void lookForClones(list[node] nodes) {
 		for(i <- [0..size(nodes)]) {
 			for(j <- [i+1..size(nodes)]) {
 				similarity = compareTrees(nodes[i], nodes[j]);				
-				println("similarity : <similarity>");	
+	//			println("similarity : <similarity>");	
 			}		
 		}
 	}
@@ -57,12 +60,16 @@ real compareTrees(node t1, node t2) {
 	}
 	list[node] nodes = nodes1 & nodes2;
 	int S = size(nodes);	
-	iprintln(nodes);
-	int L = size(nodes1 - nodes2);
-	int R = size(nodes2 - nodes1);
+	//iprintln(nodes);
+	int L = size(toSet(nodes1));
+	int R = size(toSet(nodes2));
+	//println("L is <L>");
+	//println("R is <R>");
 	real similarity = 2.0 * S / (2.0 * S + L + R);
 	return similarity;
 }
+
+
 
 int treeMass(value tree) {
 	int mass = 0;
