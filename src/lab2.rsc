@@ -9,6 +9,7 @@ import lang::java::jdt::m3::AST;
 import IO;
 import Map;
 import List;
+import Set;
 
 void run() {
 	project = |project://softEvolTest|;
@@ -35,15 +36,31 @@ void run() {
 }
 
 void lookForClones(list[node] nodes) {
-	for(i <- [0..size(nodes)]) {
-		for(j <- [i+1..size(nodes)]) {
-			compareTrees(nodes[i], nodes[j]);	
-		}		
+	if(size(nodes) > 1) {
+		for(i <- [0..size(nodes)]) {
+			for(j <- [i+1..size(nodes)]) {
+				similarity = compareTrees(nodes[i], nodes[j]);				
+				println("similarity : <similarity>");	
+			}		
+		}
 	}
 }
 
-int compareTrees(node t1, node t2) {	
-	real similarity = 2 x S / (2 x S + L + R)
+real compareTrees(node t1, node t2) {
+	list[node] nodes1 = [];
+	list[node] nodes2 = [];
+	visit(t1) {
+		case node n1: nodes1 += n1;
+	}
+	visit(t2) {
+		case node n2: nodes2 += n2;
+	}
+	list[node] nodes = nodes1 & nodes2;
+	int S = size(nodes);	
+	iprintln(nodes);
+	int L = size(nodes1 - nodes2);
+	int R = size(nodes2 - nodes1);
+	real similarity = 2.0 * S / (2.0 * S + L + R);
 	return similarity;
 }
 
