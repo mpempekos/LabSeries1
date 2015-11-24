@@ -7,16 +7,54 @@ import lang::java::m3::Core;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 import IO;
+import Map;
+import List;
 
 void run() {
 	project = |project://softEvolTest|;
-	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);
-	int numbClasses = 0;
+	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
+	map[node, list[node]] buckets = ();	
+	
 	visit(projectAST) {
-		case \class(str name, list[Type] extends, list[Type] implements, list[Declaration] body): numbClasses += 1;
-    	case \class(list[Declaration] body): numbClasses += 1;
+		// MassThreshold number???		
+		case node t: if(treeMass(t) >= 3) {
+			if(t in buckets && buckets[t] != []) {
+				buckets[t] += t;
+			}
+			else {
+				buckets[t] = [t];
+			}
+			iprintln(size(buckets[t]));
+			println("++++++++++");					
+		}
 	}
-	println(numbClasses);
+	
+	for(bucket <- domain(buckets)) {
+		lookForClones(buckets[bucket]);		
+	}
+}
+
+void lookForClones(list[node] nodes) {
+	for(i <- [0..size(nodes)]) {
+		for(j <- [i+1..size(nodes)]) {
+			compareTrees(nodes[i], nodes[j]);	
+		}		
+	}
+}
+
+int compareTrees(node t1, node t2) {	
+	real similarity = 2 x S / (2 x S + L + R)
+	return similarity;
+}
+
+int treeMass(value tree) {
+	int mass = 0;
+	visit(tree) {
+		case node t: {
+			mass += 1;			
+		}
+	}
+	return mass;	
 }
 	
 /* ---- Basic Subtree Clone Detection Algorithm ----
@@ -34,4 +72,10 @@ void run() {
 					 Then RemoveClonePair(Clones,s)
 				   AddClonePair(Clones,i,j)
 				  }
+				  	  
+	Similarity = 2 x S / (2 x S + L + R)
+	where:
+		S = number of shared nodes
+		L = number of different nodes in sub-tree 1
+		R = number of different nodes in sub-tree 2
 */
