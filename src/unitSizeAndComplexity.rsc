@@ -158,7 +158,7 @@ int checkMethodCyclomaticComplexity(Declaration methodAST) {
 		case \foreach(Declaration parameter, Expression collection, Statement body): cc += 1; 
 		case \for(list[Expression] initializers, Expression condition, list[Expression] updaters, Statement body): cc += 1; 
 		case \for(list[Expression] initializers, list[Expression] updaters, Statement body): cc += 1; 
-		case \defaultCase(): cc += 1; 
+		//case \defaultCase(): cc += 1; 
 		case \while(Expression condition, Statement body): cc += 1;
 		case \do(Statement body, Expression condition): cc += 1;  		
    	};
