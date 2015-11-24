@@ -106,6 +106,8 @@ real compareTrees(node t1, node t2) {
 	return similarity;
 }
 
+
+
 int treeMass(value tree) {
 	int mass = 0;
 	visit(tree) {
