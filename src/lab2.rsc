@@ -56,6 +56,8 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 				similarity = compareTrees(nodes[i], nodes[j]);								
 				if (similarity >= 0.5) {//SimilarityThreshold ???
 					println("similarity : <similarity>");
+					
+					/*
 					visit(nodes[i]){
 						case node s1: {														
 							for(tup <- clones) {
@@ -63,8 +65,8 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 									clones = delete(clones, tup);
 								}
 							} 
-							/*clones -= domainR(clones, {s1}); 
-							clones -= rangeR(clones, {s1});*/ 							
+							//clones -= domainR(clones, {s1}); 
+							//clones -= rangeR(clones, {s1}); 							
 						}
 					}	
 					visit(nodes[j]){
@@ -74,10 +76,12 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 									clones = delete(clones, tup2);
 								}
 							} 									
-							/*clones -= domainR(clones, {s2}); 
-							clones -= rangeR(clones, {s2});*/							
+							//clones -= domainR(clones, {s2}); 
+							//clones -= rangeR(clones, {s2});					
 						}										
 					}	
+					
+					*/
 					//println("Just added a pair");															
 				    clones += <nodes[i],nodes[j]>;				    
 				}
@@ -100,8 +104,10 @@ real compareTrees(node t1, node t2) {
 	list[node] nodes = nodes1 & nodes2;
 	int S = size(nodes);	
 	//iprintln(nodes);
-	int L = size(toSet(nodes1));
-	int R = size(toSet(nodes2));
+	//int L = size(toSet(nodes1));
+	int L = size(nodes1 - nodes2);
+	//int R = size(toSet(nodes2));
+	int R = size(nodes2 - nodes1);
 	real similarity = 2.0 * S / (2.0 * S + L + R);
 	return similarity;
 }
