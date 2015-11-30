@@ -11,30 +11,59 @@ import Map;
 import List;
 import Set;
 import Relation;
+import util::Eval;
 
+/*
+ * Situation point: 
+ * 		Type-1 might be working, need to be tested. 
+ * 			TODO: create tests for check Type-1
+ *		Ignoring already Type (ex: int, char, ...) from java variables
+ *			TODO: ignore variables as well
+ * 
+ */
 void run() {
 	project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
 	map[node, list[node]] buckets = ();	
 	
+	// visit AST and put node in is corresponding bucket using is hashvalue
 	visit(projectAST) {		
-		case node t: if(treeMass(t) >= 15) { // MassThreshold number???	
-			if(t in buckets && buckets[t] != []) {
-				buckets[t] += t;
-			}
-			else {
-				buckets[t] = [t];
-			}			
-			//println("++++++++++");					
-		}
+		case node t: 
+			if(treeMass(t) >= 15) { // MassThreshold: why 4 ???
+				/*bottom-up visit(t){
+           			case TypeSymbol e1 => char()
+     			}*/
+				visit(t) { // normalize types and variables not working, see prints of ast				
+// why this case is not working??? 
+					case Type _ => wildcard() /*{ // why wildcard() ??? need reason ???	
+						//iprintln("before: <a>");
+						a = char(); // why char() ??? need reason ???						
+						//println("after: <a>");
+					}*/
+					/*case Expression _ => \this() { // maybe ignoring to much ???
+						//iprintln("before: <e>"); // check what prints
+						b = \this();
+						//println("after: <e>"); // check what prints
+					}*/												
+				}
+				iprintln(t);									
+				if(t in buckets && buckets[t] != []) {
+					buckets[t] += t;
+				}
+				else {
+					buckets[t] = [t];
+				}			
+				//println("++++++++++");	
+			}						
 	}
 	
 	/*for(a <- domain(buckets)) {
 		iprintln(size(buckets[a]));
 	}*/	
 	
-	list[tuple[node,node]] clones = [];
+	list[tuple[node n1,node n2]] clones = [];
 	
+	// for each bucket, check for clones
 	for(bucket <- domain(buckets)) {
 		clones += lookForClones(buckets[bucket]);
 		//println(size(clones));		
@@ -43,48 +72,73 @@ void run() {
 		//iprintln(r);
 	//}
 	
-	iprintln(size(clones));
+	// print pairs of clones (ugly code)
+	println("///////////////////////////");	
+	for(pair <- clones) {		
+		if(Statement myDecl := pair.n2) {											
+			loc l = myDecl@src;
+			nodeLines = readFileLines(l);
+			for(s <- nodeLines) println(s);									
+		}	
+		if(Declaration myDecl := pair.n2) {											
+			loc l = myDecl@src;
+			nodeLines = readFileLines(l);
+			for(s <- nodeLines) println(s);									
+		}
+		println("...........................");		
+		if(Statement myDecl := pair.n1) {											
+			loc l = myDecl@src;
+			nodeLines = readFileLines(l);
+			for(s <- nodeLines) println(s);								
+		}	
+		if(Declaration myDecl := pair.n1) {											
+			loc l = myDecl@src;
+			nodeLines = readFileLines(l);
+			for(s <- nodeLines) println(s);								
+		}
+		println("///////////////////////////");			
+	}
+	
+	println("<size(clones)> pairs of clones");
 }
 
 list[tuple[node,node]] lookForClones(list[node] nodes) {	
-	println("list[node] size: <size(nodes)>");
+	println("bucket size: <size(nodes)>");
 	list[tuple[node n1, node n2]] clones = [];
 	if(size(nodes) > 1) {
-		println("hey!");
+		//println("hey!");
 		for(i <- [0..size(nodes)]) {
 			for(j <- [i+1..size(nodes)]) {
 				similarity = compareTrees(nodes[i], nodes[j]);								
-				if (similarity >= 0.5) {//SimilarityThreshold ???
+				if (similarity >= 0.5) {//SimilarityThreshold: why 0.5 ???
 					println("similarity : <similarity>");
-					visit(nodes[i]){
+					/*visit(nodes[i]){
 						case node s1: {														
 							for(tup <- clones) {
 								if(tup.n1 == s1 || tup.n2 == s1) {
-									clones = delete(clones, tup);
+									clones -= tup;
+									println("removed pair ");
 								}
-							} 
-							/*clones -= domainR(clones, {s1}); 
-							clones -= rangeR(clones, {s1});*/ 							
+							} 													
 						}
-					}	
-					visit(nodes[j]){
+					}*/	
+					/*visit(nodes[j]){
 						case node s2: {	
 							for(tup2 <- clones) {
 								if(tup2.n1 == s1 || tup2.n2 == s1) {
-									clones = delete(clones, tup2);
+									clones -= tup;
+									println("removed pair ");
 								}
-							} 									
-							/*clones -= domainR(clones, {s2}); 
-							clones -= rangeR(clones, {s2});*/							
+							} 																
 						}										
-					}	
-					//println("Just added a pair");															
+					}*/	
+					println("added pair ");															
 				    clones += <nodes[i],nodes[j]>;				    
 				}
 			}	
 		}		
 	}	
-	println("end: <size(clones)>");
+	println("clones found: <size(clones)>");
 	return clones;
 }
 
@@ -92,21 +146,25 @@ real compareTrees(node t1, node t2) {
 	list[node] nodes1 = [];
 	list[node] nodes2 = [];
 	visit(t1) {
+		//case Type _ : continue;
 		case node n1: nodes1 += n1;
 	}
 	visit(t2) {
+		//case Type _ : continue;
 		case node n2: nodes2 += n2;
 	}
+	println("nodes1: <size(nodes1)>");	
+	println("nodes2: <size(nodes2)>");	
 	list[node] nodes = nodes1 & nodes2;
-	int S = size(nodes);	
-	//iprintln(nodes);
-	int L = size(toSet(nodes1));
-	int R = size(toSet(nodes2));
+	int S = size(nodes);
+	println("S: <S>");		
+	int L = size(nodes1 - nodes2);
+	println("L: <L>");
+	int R = size(nodes2 - nodes1);
+	println("R: <R>");
 	real similarity = 2.0 * S / (2.0 * S + L + R);
 	return similarity;
 }
-
-
 
 int treeMass(value tree) {
 	int mass = 0;
