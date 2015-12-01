@@ -22,48 +22,35 @@ import util::Eval;
  * 
  */
 void run() {
-	project = |project://softEvolTest|;
+	println("visiting AST...");
+	project = |project://smallsql0.21_src|;
+	//project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
 	map[node, list[node]] buckets = ();	
 	
-	// visit AST and put node in is corresponding bucket using is hashvalue
+	// visit AST and put node in is corresponding bucket using is hashvalue	
 	visit(projectAST) {		
 		case node t: 
-			if(treeMass(t) >= 15) { // MassThreshold: why 4 ???
-				/*bottom-up visit(t){
-           			case TypeSymbol e1 => char()
-     			}*/
-				visit(t) { // normalize types and variables not working, see prints of ast				
-// why this case is not working??? 
-					case Type _ => wildcard() /*{ // why wildcard() ??? need reason ???	
-						//iprintln("before: <a>");
-						a = char(); // why char() ??? need reason ???						
-						//println("after: <a>");
-					}*/
-					/*case Expression _ => \this() { // maybe ignoring to much ???
-						//iprintln("before: <e>"); // check what prints
-						b = \this();
-						//println("after: <e>"); // check what prints
-					}*/												
-				}
-				iprintln(t);									
-				if(t in buckets && buckets[t] != []) {
-					buckets[t] += t;
+			if(treeMass(t) >= 30) { // MassThreshold: why 4 ???				
+				node f = normalizeAST(t);
+				//iprintln(f);									
+				if(f in buckets && buckets[f] != []) {
+					buckets[f] += f;
 				}
 				else {
-					buckets[t] = [t];
+					buckets[f] = [f];
 				}			
 				//println("++++++++++");	
 			}						
 	}
-	
+	println("checking for clones...");
 	/*for(a <- domain(buckets)) {
 		iprintln(size(buckets[a]));
 	}*/	
 	
 	list[tuple[node n1,node n2]] clones = [];
 	
-	// for each bucket, check for clones
+	// for each bucket, check for clones	
 	for(bucket <- domain(buckets)) {
 		clones += lookForClones(buckets[bucket]);
 		//println(size(clones));		
@@ -73,7 +60,7 @@ void run() {
 	//}
 	
 	// print pairs of clones (ugly code)
-	println("///////////////////////////");	
+	println("############################");	
 	for(pair <- clones) {		
 		if(Statement myDecl := pair.n2) {											
 			loc l = myDecl@src;
@@ -96,10 +83,23 @@ void run() {
 			nodeLines = readFileLines(l);
 			for(s <- nodeLines) println(s);								
 		}
-		println("///////////////////////////");			
+		println("############################");			
 	}
 	
 	println("<size(clones)> pairs of clones");
+}
+
+node normalizeAST(node t) {
+	/*bottom-up visit(t){
+		case TypeSymbol e1 => char()
+	}*/
+	return visit(t) { // normalize types and variables not working, see prints of ast				
+				case Type _ => wildcard() // why wildcard() ??? need reason ???							
+				//case Expression _ => \this() // to general, must specify more							
+				case \assignment(_,_,_) => \this()
+				case \fieldAccess(_,_,_) => \this()
+				case \fieldAccess(_,_) => \this()
+			}
 }
 
 list[tuple[node,node]] lookForClones(list[node] nodes) {	

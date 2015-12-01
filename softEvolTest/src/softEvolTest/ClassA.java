@@ -48,7 +48,7 @@ public class ClassA {
 	*/
 	
 	public int sum2ints2(int a, int b) {
-		int c = 0;
+		int d = 0;
 		this.a = a;
 		this.b = b;		
 		System.out.println(this.a);
