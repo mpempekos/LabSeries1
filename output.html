@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+circle {
+fill: rgb(255, 255, 255);
+fill-opacity: .25;
+stroke: rgb(31, 119, 180);
+stroke-width: 1px;
+}
+.leaf circle {
+fill: #ffffff;
+fill-opacity: 1;
+}
+text {
+font: 10px sans-serif;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var diameter = 960,
+format = d3.format(",d");
+var pack = d3.layout.pack().size([diameter - 4, diameter - 4])
+.value(function(d) { return d.size; });
+
+var svg = d3.select("body").append("svg")
+.attr("width", diameter)
+.attr("height", diameter)
+.append("g")
+.attr("transform", "translate(2,2)");
+
+var myjson = '{"name": "C:","children": [{"name": "Users","children": [{"name": "andre","children": [{"name": "OneDrive","children": [{"name": "Documents","children": [{"name": "GitHub","children": [{"name": "LabSeries1","children": [{"name": "smallsql0.21_src","children": [{"name": "src","children": [{"name": "smallsql","children": [{"name": "database","children": [{"name": "Column.java","children": [{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setName", "startline": 57, "endline": 59, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setDefaultValue", "startline": 62, "endline": 65, "size": 4, "color": "#FFFF00", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getDefaultValue", "startline": 71, "endline": 75, "size": 5, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getDefaultDefinition", "startline": 77, "endline": 79, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getName", "startline": 81, "endline": 83, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "isAutoIncrement", "startline": 85, "endline": 87, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setAutoIncrement", "startline": 89, "endline": 91, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "initAutoIncrement", "startline": 93, "endline": 99, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setNewAutoIncrementValue", "startline": 101, "endline": 105, "size": 5, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "isCaseSensitive", "startline": 107, "endline": 109, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setNullable", "startline": 111, "endline": 113, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "isNullable", "startline": 115, "endline": 117, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setDataType", "startline": 119, "endline": 121, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getDataType", "startline": 123, "endline": 125, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getDisplaySize", "startline": 128, "endline": 130, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setScale", "startline": 132, "endline": 134, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getScale", "startline": 136, "endline": 144, "size": 9, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setPrecision", "startline": 146, "endline": 149, "size": 4, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getPrecision", "startline": 151, "endline": 153, "size": 3, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getColumnSize", "startline": 155, "endline": 159, "size": 5, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "getFlag", "startline": 162, "endline": 166, "size": 5, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "setFlag", "startline": 169, "endline": 173, "size": 5, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/smallsql0.21_src/src/smallsql/database/Column.java", "methodname": "copy", "startline": 176, "endline": 181, "size": 6, "color": "#FFFFFF", "type": "undefined"}]}]}]}]}]}]}]}]}]}]}]}]}';
+root = JSON.parse(myjson);
+
+var node = svg.datum(root).selectAll(".node")
+.data(pack.nodes)
+.enter().append("g")
+.attr("class", function(d) { return d.children ? "node" : "leaf node"; })
+.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+node.append("title")
+.text(function(d) { return d.methodname + (d.children ? "" : ": " + format(d.size)); });
+
+node.append("circle")
+.style("fill", function(d) { return d.color;})
+.attr("r", function(d) { return d.r; })
+.on("click", function(d) {
+document.getElementById("filepath").innerHTML = d.name;
+document.getElementById("methodname").innerHTML = d.methodname;
+document.getElementById("startline").innerHTML = d.startline;
+document.getElementById("endline").innerHTML = d.endline;
+document.getElementById("type").innerHTML = d.type;
+});
+
+node.filter(function(d) { return !d.children; }).append("text")
+.attr("dy", ".3em")
+.style("text-anchor", "middle")
+.text(function(d) { return d.methodname.substring(0, d.r / 3); });
+
+d3.select(self.frameElement).style("height", diameter + "px");
+
+</script>
+
+<table border=2>
+<tr>
+<td>file path</td>
+<td><div id="filepath"></div></td>
+</tr>
+<tr>
+ <td>method name</td>
+<td><div id="methodname"></div></div></td>
+</tr>
+<tr>
+<td>start line</td>
+<td><div id="startline"></div></div></td>
+</tr>
+<tr>
+<td>end line</td>
+<td><div id="endline"></div></div></td>
+</tr>
+<tr>
+<td>type</td>
+<td><div id="type"></div></div></td>
+</tr>
+</table>
+
+</body>
+</html>

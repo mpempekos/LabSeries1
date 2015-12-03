@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+circle {
+fill: rgb(255, 255, 255);
+fill-opacity: .25;
+stroke: rgb(31, 119, 180);
+stroke-width: 1px;
+}
+.leaf circle {
+fill: #ffffff;
+fill-opacity: 1;
+}
+text {
+font: 10px sans-serif;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var diameter = 960,
+format = d3.format(",d");
+var pack = d3.layout.pack().size([diameter - 4, diameter - 4])
+.value(function(d) { return d.size; });
+
+var svg = d3.select("body").append("svg")
+.attr("width", diameter)
+.attr("height", diameter)
+.append("g")
+.attr("transform", "translate(2,2)");
+
+var myjson = '{"name": "C:","children": [{"name": "Users","children": [{"name": "andre","children": [{"name": "OneDrive","children": [{"name": "Documents","children": [{"name": "GitHub","children": [{"name": "LabSeries1","children": [{"name": "softEvolTest","children": [{"name": "src","children": [{"name": "softEvolTest","children": [{"name": "ClassA.java","children": [{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints3", "startline": 13, "endline": 23, "size": 11, "color": "#FF0000", "type": "1"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints35", "startline": 25, "endline": 35, "size": 11, "color": "#0000FF", "type": "2"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints3", "startline": 42, "endline": 48, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints3", "startline": 56, "endline": 62, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints2", "startline": 71, "endline": 78, "size": 8, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints28", "startline": 80, "endline": 87, "size": 8, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "f", "startline": 89, "endline": 95, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "g", "startline": 97, "endline": 103, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints", "startline": 108, "endline": 118, "size": 11, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints09", "startline": 120, "endline": 127, "size": 8, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints20", "startline": 129, "endline": 135, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints3", "startline": 13, "endline": 23, "size": 11, "color": "#FF0000", "type": "1"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints35", "startline": 25, "endline": 35, "size": 11, "color": "#0000FF", "type": "2"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints3", "startline": 42, "endline": 48, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints3", "startline": 56, "endline": 62, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints2", "startline": 71, "endline": 78, "size": 8, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints28", "startline": 80, "endline": 87, "size": 8, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "f", "startline": 89, "endline": 95, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "g", "startline": 97, "endline": 103, "size": 7, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints", "startline": 108, "endline": 118, "size": 11, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints09", "startline": 120, "endline": 127, "size": 8, "color": "#FFFFFF", "type": "undefined"},{"name": "C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java", "methodname": "sum2ints20", "startline": 129, "endline": 135, "size": 7, "color": "#FFFFFF", "type": "undefined"}]}]}]}]}]}]}]}]}]}]}]}';
+root = JSON.parse(myjson);
+
+var node = svg.datum(root).selectAll(".node")
+.data(pack.nodes)
+.enter().append("g")
+.attr("class", function(d) { return d.children ? "node" : "leaf node"; })
+.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+node.append("title")
+.text(function(d) { return d.methodname + (d.children ? "" : ": " + format(d.size)); });
+
+node.append("circle")
+.style("fill", function(d) { return d.color;})
+.attr("r", function(d) { return d.r; })
+.on("click", function(d) {
+document.getElementById("filepath").innerHTML = d.name;
+document.getElementById("methodname").innerHTML = d.methodname;
+document.getElementById("startline").innerHTML = d.startline;
+document.getElementById("endline").innerHTML = d.endline;
+document.getElementById("type").innerHTML = d.type;
+});
+
+node.filter(function(d) { return !d.children; }).append("text")
+.attr("dy", ".3em")
+.style("text-anchor", "middle")
+.text(function(d) { return d.methodname.substring(0, d.r / 3); });
+
+d3.select(self.frameElement).style("height", diameter + "px");
+
+</script>
+
+<table border=2>
+<tr>
+<td>file path</td>
+<td><div id="filepath"></div></td>
+</tr>
+<tr>
+ <td>method name</td>
+<td><div id="methodname"></div></div></td>
+</tr>
+<tr>
+<td>start line</td>
+<td><div id="startline"></div></div></td>
+</tr>
+<tr>
+<td>end line</td>
+<td><div id="endline"></div></div></td>
+</tr>
+<tr>
+<td>type</td>
+<td><div id="type"></div></div></td>
+</tr>
+</table>
+
+</body>
+</html>

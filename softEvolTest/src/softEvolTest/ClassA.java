@@ -5,11 +5,11 @@ public class ClassA {
 	private int b;
 	private int d;
 	
-/************************* TYPE-1 CLONES *************************
-Identical code fragments except for variations in whitespace, 
-layout and comments.
-*****************************************************************/	
-	/*
+//************************* TYPE-1 CLONES *************************
+//Identical code fragments except for variations in whitespace, 
+//layout and comments.
+//*****************************************************************/	
+	
 	public int sum2ints3(int a, int d) {
 		int age = 0;
 		this.a = a;
@@ -34,7 +34,10 @@ layout and comments.
 		return this.a + this.d;
 	}	
 	
-	public class ClassB {
+	
+	
+	
+	 public class ClassB {
 		private int a;
 		private int b;
 		private int d;
@@ -61,11 +64,14 @@ layout and comments.
 			return this.a + this.d;
 		}
 	}
-	*/
-/************************* TYPE-2 CLONES *************************	
-Syntactically identical fragments except for variations in 
-identifiers, literals, types, whitespace, layout and comments.
-*****************************************************************/
+	
+	
+	
+//************************* TYPE-2 CLONES *************************	
+//Syntactically identical fragments except for variations in 
+//identifiers, literals, types, whitespace, layout and comments.
+//*****************************************************************/
+	
 	
 	public int sum2ints2(int a, int b) {
 		int c = 0;
@@ -104,8 +110,9 @@ identifiers, literals, types, whitespace, layout and comments.
 	
 	
 /*****************************************************************/	
-	/*public int sum2ints(int c, int b) {
-		/*int age = 0;
+	
+	public int sum2ints045(int a, int b) {
+		int age = 0;
 		if(age == 0) age = 1;
 		if(age == 1) age = 2;
 		if(age == 2) age = 3;
@@ -114,9 +121,9 @@ identifiers, literals, types, whitespace, layout and comments.
 		System.out.println(this.c);		
 		System.out.println(this.c + "+" + this.b + "=");	
 		return this.c + this.b;
-	}*/
+	}
 	
-	/*public int sum2ints09(int a, int b) {
+	public int sum2ints09(int a, int b) {
 		this.c = c;
 		this.a = a;
 		this.b = b;				
@@ -131,5 +138,7 @@ identifiers, literals, types, whitespace, layout and comments.
 		System.out.println(this.a);
 		System.out.println(this.a + "+" + this.b + "=");		
 		return this.a + this.b;
-	} */	
+	}	
+	
+	
 }
