@@ -14,20 +14,11 @@ import Relation;
 import util::Eval;
 
 /*
- * Steps:
- * 		1- Visit project AST and put nodes to buckets
- *			1.1- Normalize node to find type-2 clones
- *		2- For each bucket, check in pairs for clones
- * 			2.1- 
- *
- * Situation point: 
- * 		Type-1 might be working, need to be tested. 
- * 			TODO: create tests for check Type-1
- *		Ignoring already Type (ex: int, char, ...) from java variables
- *			TODO: ignore variables as well
- * 		TODO: Find Clone Sequences
- *		Problem: Not removing child clones (clones inside clones)
- * 		Problem: Similarity nort working
+ * Situation point:  		
+ * 		TODO: create tests for Type-1 and Type-2
+ *		question: Already Finding Clone Sequences??? test
+ * 		Problem: Similarity not working
+ * 		TODO: Type-3 and Type-4
  */
 void run() {
 	println("visiting AST...");
