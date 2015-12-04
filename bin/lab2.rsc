@@ -14,33 +14,41 @@ import Relation;
 import util::Eval;
 
 /*
- * Situation point:  		
- * 		TODO: create tests for Type-1 and Type-2
- *		question: Already Finding Clone Sequences??? test
- * 		Problem: Similarity not working
- * 		TODO: Type-3 and Type-4
+ * Situation point:
+ *		* Type-1 and Type-2 clones probably done  		
+ * 				TODO: create tests for Type-1 and Type-2
+ *		* Question: Already Finding Clone Sequences??? test
+ *		* Changed hash function to treeMass. Consequences:
+ *				Detecting Type-3 clones but just clones with changed 
+ *					position lines and/or |lines added - lines removed| == 0 
+ *	 				(same number of nodes)
+ *				inefficiency: comparing a lot of garbage
+ *				problem: leaving out important comparations:
+ *					when |lines added - lines removed| != 0 
+ *					(still type-3 clones right???)
  */
 void run() {
 	println("visiting AST...");
-	//project = |project://smallsql0.21_src|;
-	project = |project://softEvolTest|;
+	//project = |project://hsqldb-2.3.1|;
+	project = |project://smallsql0.21_src|;
+	//project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
-	map[node, list[node]] buckets = ();	
+	map[int, list[node]] buckets = ();	
 	
 	// visit AST and put node in is corresponding bucket using is hashvalue	
 	visit(projectAST) {		
 		case node t: 
 			if(Declaration _ := t || Statement _ := t) { // explain why???
-				if(treeMass(t) >= 30) { // MassThreshold: why _ ???				
+				mass = treeMass(t);
+				if(mass >= 30) { // MassThreshold: why 30 ???				
 					node f = normalizeAST(t);
 					//iprintln(f);									
-					if(f in buckets && buckets[f] != []) {
-						buckets[f] += f;
+					if(mass in buckets && buckets[mass] != []) {
+						buckets[mass] += f;
 					}
 					else {
-						buckets[f] = [f];
-					}			
-					//println("++++++++++");	
+						buckets[mass] = [f];
+					}								
 				}
 			}						
 	}
@@ -96,7 +104,7 @@ void run() {
 		println("############################");		
 	}
 	
-	println("<size(clones)> pairs of clones");
+	println("<size(clones)> pairs of clones found");
 }
 
 list[tuple[node n1,node n2]] removeChildClones(list[tuple[node n1,node n2]] clones) {
@@ -185,26 +193,29 @@ node normalizeAST(node t) {
 list[tuple[node,node]] lookForClones(list[node] nodes) {	
 	//println("bucket size: <size(nodes)>");
 	list[tuple[node n1, node n2]] clones = [];
+	real pairs = 1.0;
+	real allSim = 0.0;
 	if(size(nodes) > 1) {
 		//println("hey!");
 		for(i <- [0..size(nodes)]) {
 			for(j <- [i+1..size(nodes)]) {
-				//similarity = compareTrees(nodes[i], nodes[j]);								
-				//if (similarity >= 0.0) {//SimilarityThreshold: why 0.5 ???
-					//println("similarity : <similarity>");					
-					//println("added pair ");
-					//clones = removeChildClones(clones); // I don't know if is working																			
+				similarity = compareTrees(nodes[i], nodes[j]);
+				allSim += similarity;	
+				pairs += 1;
+				//println("similarity : <similarity>");							
+				if (similarity >= 0.9) {//SimilarityThreshold: why 0.9 ???														
 				    clones += <nodes[i],nodes[j]>;				    				   
-				//}
+				}
 			}	
 		}		
 	}	
+	//println(allSim/pairs);
 	//println("clones found: <size(clones)>");
 	//cleanClones = removeChildClones(clones);
 	return clones;//cleanClones;
 }
 
-/*real compareTrees(node t1, node t2) {
+real compareTrees(node t1, node t2) {
 	list[node] nodes1 = [];
 	list[node] nodes2 = [];
 	visit(t1) {
@@ -226,7 +237,7 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 	//println("R: <R>");
 	real similarity = 2.0 * S / (2.0 * S + L + R);
 	return similarity;
-}*/
+}
 
 int treeMass(value tree) {
 	int mass = 0;
@@ -237,3 +248,14 @@ int treeMass(value tree) {
 	}
 	return mass;	
 }
+
+/*
+find type-3 clones using Program Dependence Graph (PDG) 
+and Program Slicing:
+
+Step 1: Find relevant procedures/methods
+Step 2: Find pair of vertices with equivalent
+syntactic structure
+Step 3: Find clones
+Step 4: Group clones
+*/
