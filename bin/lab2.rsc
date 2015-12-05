@@ -18,7 +18,7 @@ import util::Eval;
  *		* Type-1 and Type-2 clones probably done  		
  * 				TODO: create tests for Type-1 and Type-2
  *		* Question: Already Finding Clone Sequences??? test
- *		* Changed hash function to treeMass. Consequences:
+ *		* if change hash function to treeMass. Consequences:
  *				Detecting Type-3 clones but just clones with changed 
  *					position lines
  *				inefficiency: comparing a lot of garbage
@@ -29,8 +29,8 @@ import util::Eval;
 void run() {
 	println("visiting AST...");
 	//sproject = |project://hsqldb-2.3.1|;
-	project = |project://smallsql0.21_src|;
-	//project = |project://softEvolTest|;
+	//project = |project://smallsql0.21_src|;
+	project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
 	map[node, list[node]] buckets = ();	
 	
@@ -137,9 +137,9 @@ list[tuple[node n1,node n2]] removeSubTreesClones(node cloneTree, list[tuple[nod
 }
 
 node normalizeAST(node t) {
-	return visit(t) { // normalize types and variables not working, see prints of ast				
+	return visit(t) {				
 				case Type _ => wildcard() // why wildcard() ??? need reason ???														
-				case str _ => "" // probably to much generalized???
+				case str _ => ""
 				case int _ => 1	
 				//case bool _ => true				
 			}
@@ -170,6 +170,7 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 	return clones;//cleanClones;
 }
 
+/*
 real compareTrees(node t1, node t2) {
 	list[node] nodes1 = [];
 	list[node] nodes2 = [];
@@ -191,6 +192,7 @@ real compareTrees(node t1, node t2) {
 	real similarity = 2.0 * S / (2.0 * S + L + R);
 	return similarity;
 }
+*/
 
 int treeMass(node tree) {
 	int mass = 0;
