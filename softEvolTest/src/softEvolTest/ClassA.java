@@ -103,6 +103,7 @@ public class ClassA {
 		int i=5;
 	}
 	
+	
 //************************* TYPE-3 CLONES *************************	
 // One or more statements can be modified, added, or removed. 
 // Furthermore, the structure of code fragment may be changed 
@@ -128,8 +129,27 @@ public class ClassA {
 		return this.a + this.b;
 	}
 	
+	public int type3_B(int a, int b, int c) {
+		int j = 1;
+		this.a = a;
+		this.b = b;				
+		System.out.println(this.a);
+		System.out.println(this.a + "+" + this.b + "=");		
+		return this.a + this.b;
+	}
+	
+	public int type3_b(int a, int b, int c) {			
+		this.a = a;
+		this.b = b;		
+		int j = 0;
+		System.out.println(this.a);		
+		System.out.println(this.a + "+" + this.b + "=");		
+		return this.a + this.b;
+	}
+	
 //*****************************************************************/	
 
+	
 	public int sum2ints045(int a, int b) {
 		int age = 0;
 		if(age == 0) age = 1;

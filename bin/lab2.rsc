@@ -20,8 +20,7 @@ import util::Eval;
  *		* Question: Already Finding Clone Sequences??? test
  *		* Changed hash function to treeMass. Consequences:
  *				Detecting Type-3 clones but just clones with changed 
- *					position lines and/or |lines added - lines removed| == 0 
- *	 				(same number of nodes)
+ *					position lines
  *				inefficiency: comparing a lot of garbage
  *				problem: leaving out important comparations:
  *					when |lines added - lines removed| != 0 
@@ -29,11 +28,11 @@ import util::Eval;
  */
 void run() {
 	println("visiting AST...");
-	//project = |project://hsqldb-2.3.1|;
+	//sproject = |project://hsqldb-2.3.1|;
 	project = |project://smallsql0.21_src|;
 	//project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
-	map[int, list[node]] buckets = ();	
+	map[node, list[node]] buckets = ();	
 	
 	// visit AST and put node in is corresponding bucket using is hashvalue	
 	visit(projectAST) {		
@@ -43,21 +42,20 @@ void run() {
 				if(mass >= 30) { // MassThreshold: why 30 ???				
 					node f = normalizeAST(t);
 					//iprintln(f);									
-					if(mass in buckets && buckets[mass] != []) {
-						buckets[mass] += f;
+					if(f in buckets && buckets[f] != []) {
+						buckets[f] += f;
 					}
 					else {
-						buckets[mass] = [f];
+						buckets[f] = [f];
 					}								
 				}
 			}						
 	}
 	println("checking for clones...");
-	/*for(a <- domain(buckets)) {
-		iprintln(size(buckets[a]));
-	}*/	
+	//for(a <- domain(buckets)) println(size(buckets[a]));	
 	
 	list[tuple[node n1,node n2]] newClones = [];
+	//node domain(buckets)
 	
 	// for each bucket, check for clones	
 	for(bucket <- domain(buckets)) {
@@ -65,6 +63,7 @@ void run() {
 		//println(size(clones));		
 	}	
 	
+	println("removing child clones...");
 	clones = removeChildClones(newClones);
 	
 	// print pairs of clones (ugly code)
@@ -111,10 +110,10 @@ list[tuple[node n1,node n2]] removeChildClones(list[tuple[node n1,node n2]] clon
 	list[tuple[node n1,node n2]] finalClones = clones;	
 	for(pairClones <- clones) {	
 		//println("//");	
-		aux = removeSubTreesClones(pairClones.n1, finalClones);		
+		//aux = removeSubTreesClones(pairClones.n1, finalClones);	COMMENT ONLY TEMPORARLY!!!	
 		//for(pairClones2 <- aux) println("<treeMass(pairClones2.n1)>:<treeMass(pairClones2.n2)>");
 		//println("##");
-		finalClones = removeSubTreesClones(pairClones.n2, aux);		 
+		finalClones = removeSubTreesClones(pairClones.n2, finalClones);	// JUST CONSIDERING 1 ELEM OF TUPLE BECAUSE THEY ARE EQUAL	 
 	}
 	return finalClones;
 }	
@@ -138,55 +137,11 @@ list[tuple[node n1,node n2]] removeSubTreesClones(node cloneTree, list[tuple[nod
 }
 
 node normalizeAST(node t) {
-	/*bottom-up visit(t){
-		case TypeSymbol e1 => char()
-	}*/
 	return visit(t) { // normalize types and variables not working, see prints of ast				
 				case Type _ => wildcard() // why wildcard() ??? need reason ???														
-				case str _ => "" // probably to much generalized???		
-				/*
-				
-				All nodes to be normalized for type-2 clones::
-				
-				data Declaration:
-				
-				\enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
-	  			\enumConstant(str name, list[Expression] arguments, Declaration class)
-	 			\enumConstant(str name, list[Expression] arguments)
-	 			\class(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
-				\interface(str name, list[Type] extends, list[Type] implements, list[Declaration] body)    		*/	
-				//case \method(a, b, c, d, e) => \method(a, "method", c, d, e)
-				//case \method(a, b, c, d, e) => \method(a, "method", c, d)
-				/*\constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl)
-				\import(str name)
-				\package(str name)
-				\package(Declaration parentPackage, str name)    	
-				\typeParameter(str name, list[Type] extendsList)
-				\annotationType(str name, list[Declaration] body)
-				\annotationTypeMember(Type \type, str name)
-				\annotationTypeMember(Type \type, str name, Expression defaultBlock)    
-				\parameter(Type \type, str name, int extraDimensions)
-				\vararg(Type \type, str name)	
-					
-				data Expression :
-				    		
-				\characterLiteral(str charValue)    		    	
-				\fieldAccess(bool isSuper, Expression expression, str name)
-				\fieldAccess(bool isSuper, str name)
-				\instanceof(Expression leftSide, Type rightSide)
-				\methodCall(bool isSuper, str name, list[Expression] arguments)
-				\methodCall(bool isSuper, Expression receiver, str name, list[Expression] arguments)
-				\number(str numberValue)
-				\stringLiteral(str stringValue)    			
-				\variable(str name, int extraDimensions)
-				\variable(str name, int extraDimensions, Expression \initializer)
-				\simpleName(str name)
-				\markerAnnotation(str typeName)
-				\normalAnnotation(str typeName, list[Expression] memberValuePairs)
-				\memberValuePair(str name, Expression \value)             
-				\singleMemberAnnotation(str typeName, Expression \value)
-	
-				*/							
+				case str _ => "" // probably to much generalized???
+				case int _ => 1	
+				//case bool _ => true				
 			}
 }
 
@@ -199,13 +154,13 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 		//println("hey!");
 		for(i <- [0..size(nodes)]) {
 			for(j <- [i+1..size(nodes)]) {
-				similarity = compareTrees(nodes[i], nodes[j]);
-				allSim += similarity;	
-				pairs += 1;
-				//println("similarity : <similarity>");							
-				if (similarity >= 0.9) {//SimilarityThreshold: why 0.9 ???														
+				//similarity = compareTrees(nodes[i], nodes[j]);
+				//allSim += similarity;	
+				//pairs += 1;
+				////println("similarity : <similarity>");							
+				//if (similarity >= 0.9) {//SimilarityThreshold: why 0.9 ???														
 				    clones += <nodes[i],nodes[j]>;				    				   
-				}
+				//}
 			}	
 		}		
 	}	
@@ -218,12 +173,10 @@ list[tuple[node,node]] lookForClones(list[node] nodes) {
 real compareTrees(node t1, node t2) {
 	list[node] nodes1 = [];
 	list[node] nodes2 = [];
-	visit(t1) {
-		//case Type _ : continue;
+	visit(t1) {		
 		case node n1: nodes1 += n1;
 	}
-	visit(t2) {
-		//case Type _ : continue;
+	visit(t2) {		
 		case node n2: nodes2 += n2;
 	}
 	//println("nodes1: <size(nodes1)>");	
@@ -239,7 +192,7 @@ real compareTrees(node t1, node t2) {
 	return similarity;
 }
 
-int treeMass(value tree) {
+int treeMass(node tree) {
 	int mass = 0;
 	visit(tree) {
 		case node t: {
