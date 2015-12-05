@@ -10,6 +10,14 @@ import Set;
 import vis:: Figure;
 import vis:: Render;
 
+
+/* @andre : finally the iteration is fucking working... i did so many tests...all i need from you to give me (at this point...) is a
+	tree representing the structure of the program (instead of a list/set we were talking about)...
+	 take a look below at CTree i have created and u will understand...
+
+*/
+
+
 data CTree = leaf(str name)
 | noode(str name,int methodsIncluded, list[CTree] internalTrees);
 
