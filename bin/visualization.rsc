@@ -18,18 +18,18 @@ import vis:: Render;
 */
 
 
-data CTree = leaf(str name)
-| noode(str name,int methodsIncluded, list[CTree] internalTrees);
+data ProjectStructure = method(str name)
+| folderOrFile(str name,int methodsIncluded, list[ProjectStructure] internalTrees);
 
-Figure formBoxes(CTree nodee) {
+Figure formBoxes(ProjectStructure nodee) {
 
-	Figure fig = box(text("shit"));
+	Figure fig ;
 		
 	switch (nodee) {
-		case noode(name,N,internalNodes): 
+		case folderOrFile(name,N,internalNodes): 
 			fig = box(vcat([text(nodee.name),visualize(nodee)]), area(nodee.methodsIncluded));
 			
-		case leaf(n):
+		case method(n):
 			fig = box(text(n),area(1));	// to do --> fillColor...
 
 	}
@@ -38,43 +38,43 @@ Figure formBoxes(CTree nodee) {
 }
 
 
-Figure visualize(CTree tree) {
+Figure visualize(ProjectStructure tree) {
 	Figure fig;
 	switch (tree) {
-		case noode(name,N,internalNodes): { 
+		case folderOrFile(name,N,internalNodes): { 
 			Figures figs = [];
+			
 			for (i <- internalNodes){
-			  	//figs += visualize(i);
 			  	figs += formBoxes(i);
 		  	}
 		  			  	
 		  	fig = treemap(figs);
 		  	
-		  	//fig = box(treemap(figs));
 		}
 				
-		case leaf(name): fig = box(text(name),area(1));		// todo: fillCOlor--according to pairs it has
+		//case method(name): fig = box(text(name),area(1));
 	}
 		
 	return fig;
 }
 
+/* src will be the last single node in the tree... */
+
 
 void runVisualization() {
-	method5 = leaf("method5");
-	method4 = leaf("method4");
-	method3 = leaf("method3");
-	method2 = leaf("method2");
-	method1 = leaf("method1");
-	file1 = noode("file1",2,[method1,method2]);
-	file2 = noode("file2",1,[method3]);
-	file3 = noode("file3",1,[method3]);
-	file4 = noode("file4",1,[method4]);
-	package1 = noode("package1",2,[file1]);
-	package2 = noode("package2",2,[file3,file4]);
-	package3 = noode("package3",3,[package2,file2]);
-	src = noode("src",4,[package1,package3]);
-	
+	method5 = method("method5");
+	method4 = method("method4");
+	method3 = method("method3");
+	method2 = method("method2");
+	method1 = method("method1");
+	file1 = folderOrFile("file1",2,[method1,method2]);
+	file2 = folderOrFile("file2",1,[method3]);
+	file3 = folderOrFile("file3",2,[method3,method5]);
+	file4 = folderOrFile("file4",1,[method4]);
+	package1 = folderOrFile("package1",2,[file1]);
+	package2 = folderOrFile("package2",3,[file3,file4]);
+	package3 = folderOrFile("package3",4,[package2,file2]);
+	src = folderOrFile("src",6,[package1,package3]);
 	
 	
 /*	top-down visit(src) {
@@ -82,5 +82,6 @@ void runVisualization() {
 		case noode(n,b,xs): println("Name of path is <n>!\n");
 	} 
 	*/
+	
 	render(visualize(src));
 }
