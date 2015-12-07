@@ -1,5 +1,10 @@
 package softEvolTest;
 
+import smallsql.database.ExpressionValue;
+import smallsql.database.Integer;
+import smallsql.database.SmallSQLException;
+import smallsql.database.language.Language;
+
 public class ClassA {
 	private int a;
 	private int b;
@@ -140,9 +145,9 @@ public class ClassA {
 	
 	public int type3_b(int a, int b, int c) {			
 		this.a = a;
-		this.b = b;		
-		int j = 0;
+		this.b = b;	
 		System.out.println(this.a);		
+		int j = 0;		
 		System.out.println(this.a + "+" + this.b + "=");		
 		return this.a + this.b;
 	}
@@ -157,6 +162,10 @@ public class ClassA {
 		if(age == 2) age = 3;
 		this.c = c;
 		this.b = b;	
+		for(int p=0; p<params.size(); p++){
+            if(((ExpressionValue)params.get(p)).isEmpty())
+            	throw SmallSQLException.create(Language.PARAM_EMPTY, new Integer(p+1));
+        }
 		System.out.println(this.c);		
 		System.out.println(this.c + "+" + this.b + "=");	
 		return this.c + this.b;
@@ -164,7 +173,11 @@ public class ClassA {
 		
 	public int sum2ints20(int a, int b) {
 		int d = 0; this.a = a;		
-		this.b = b;		
+		this.b = b;	
+		for(int p=0; p<params.size(); p++){
+            if(((ExpressionValue)params.get(p)).isEmpty())
+            	throw SmallSQLException.create(Language.PARAM_EMPTY, new Integer(p+1));
+        }
 		System.out.println(this.a);
 		System.out.println(this.a + "+" + this.b + "=");		
 		return this.a + this.b;
