@@ -144,11 +144,12 @@ ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str r
 	return tree;
 }
 
-ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t] pair, str rootNode) {
-	list[str] aux = split(rootNode,pair.l1.uri);		
-	list[str] pathForInsertion = split("/",aux[1]);
-	list[str] aux1 = split(rootNode,pair.l2.uri);		
-	list[str] pathForInsertion1 = split("/",aux1[1]);
+ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t] pair, str rootNode) {	
+	int pos = findFirst(pair.l1.uri, rootNode);
+	str aux = pair.l1.uri[pos+size(rootNode)+1..];	
+	list[str] pathForInsertion = split("/",aux);
+	str aux1 = pair.l2.uri[pos+size(rootNode)+1..];		
+	list[str] pathForInsertion1 = split("/",aux1);
 	//str prevNode = rootNode;
 	//ProjectStructure currentNode = tree;
 	
