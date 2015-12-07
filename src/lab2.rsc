@@ -27,11 +27,11 @@ import visualization;
  *					when |lines added - lines removed| != 0 
  *					(still type-3 clones right???)
  */
-void run() {
+list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	println("visiting AST...");
-	//loc project = |project://hsqldb-2.3.1|;
-	//loc project = |project://smallsql0.21_src|;
-	loc project = |project://softEvolTest|;
+	//project = |project://hsqldb-2.3.1|;
+	//project = |project://smallsql0.21_src|;
+	//project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
 	map[node, list[node]] buckets = ();	
 	
@@ -40,7 +40,7 @@ void run() {
 		case node t: 
 			if(Declaration _ := t || Statement _ := t) { // explain why???
 				mass = treeMass(t);
-				if(mass >= 30) { // MassThreshold: why 30 ???				
+				if(mass >= minNumbNodes) {				
 					node f = normalizeAST(t);
 					//iprintln(f);									
 					if(f in buckets && buckets[f] != []) {
@@ -52,7 +52,7 @@ void run() {
 				}
 			}						
 	}
-	println("checking for clones...");
+	println("defining type of clones...");
 	//for(a <- domain(buckets)) println(size(buckets[a]));	
 	
 	list[tuple[node n1,node n2, int t]] newClones = [];
@@ -60,7 +60,7 @@ void run() {
 	
 	// for each bucket, check for clones	
 	for(bucket <- domain(buckets)) {
-		newClones += lookForClones(buckets[bucket]);		
+		newClones += defineTypeOfClones(buckets[bucket]);		
 		//println(size(clones));		
 	}	
 	
@@ -102,23 +102,24 @@ void run() {
 			nodeLines = readFileLines(l2);
 			for(s <- nodeLines) println(s);										
 		}
-		println("############################");	
-		println("############################");
-		println("############################");
+		println("////////////////////////////");	
+		println("////////////////////////////");
+		println("////////////////////////////");
 		clonePairs += <l1, l2, pair.t>;	
 	}
 	
 	println("<size(clones)> pairs of clones found");	
+	return clonePairs;
 }
 
 list[tuple[node n1,node n2,int t]] removeChildClones(list[tuple[node n1,node n2, int t]] clones) {
 	list[tuple[node n1,node n2, int t]] finalClones = clones;	
 	for(pairClones <- clones) {	
 		//println("//");	
-		//aux = removeSubTreesClones(pairClones.n1, finalClones);	COMMENT ONLY TEMPORARLY!!!	
+		aux = removeSubTreesClones(pairClones.n1, finalClones);		
 		//for(pairClones2 <- aux) println("<treeMass(pairClones2.n1)>:<treeMass(pairClones2.n2)>");
 		//println("##");
-		finalClones = removeSubTreesClones(pairClones.n2, finalClones);	// JUST CONSIDERING 1 ELEM OF TUPLE BECAUSE THEY ARE EQUAL	 
+		finalClones = removeSubTreesClones(pairClones.n2, aux);	 
 	}
 	return finalClones;
 }	
@@ -143,18 +144,18 @@ list[tuple[node n1,node n2, int t]] removeSubTreesClones(node cloneTree, list[tu
 
 node normalizeAST(node t) {
 	return visit(t) {				
-				case Type _ => wildcard() // why wildcard() ??? need reason ???														
+				case Type _ => wildcard()														
 				case str _ => ""
 				case int _ => 1	
 				//case bool _ => true				
 			}
 }
 
-list[tuple[node,node,int]] lookForClones(list[node] nodes) {	
+list[tuple[node,node,int]] defineTypeOfClones(list[node] nodes) {	
 	//println("bucket size: <size(nodes)>");
 	list[tuple[node n1, node n2, int t]] clones = [];
-	real pairs = 1.0;
-	real allSim = 0.0;
+	//real pairs = 1.0;
+	//real allSim = 0.0;
 	if(size(nodes) > 1) {		
 		for(i <- [0..size(nodes)]) {
 			for(j <- [i+1..size(nodes)]) {
@@ -162,7 +163,7 @@ list[tuple[node,node,int]] lookForClones(list[node] nodes) {
 				//allSim += similarity;	
 				//pairs += 1;
 				println("similarity : <similarity>");							
-				if (similarity < 1.0) {//SimilarityThreshold: why 0.9 ???														
+				if (similarity < 1.0) {														
 				    clones += <nodes[i],nodes[j],2>;				    				   
 				} else {
 					clones += <nodes[i],nodes[j],1>;	
@@ -219,8 +220,3 @@ syntactic structure
 Step 3: Find clones
 Step 4: Group clones
 */
-
-
-//CTree parseClonePairsLocsToCTree(list[tuple[loc l1, loc l2]]) {
-//	
-//}
