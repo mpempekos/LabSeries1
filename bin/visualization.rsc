@@ -50,6 +50,8 @@ Figure visualize(ProjectStructure tree) {
 			for (i <- internalNodes){
 			  	figs += formBoxes(i);
 		  	}
+		  	
+		  	// edw case leaf???
 		  			  	
 		  	fig = treemap(figs);
 		  	
