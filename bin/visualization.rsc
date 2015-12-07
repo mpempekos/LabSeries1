@@ -12,11 +12,10 @@ import vis:: Render;
 import lab2;
 
 
-/* @andre : finally the iteration is fucking working... i did so many tests...all i need from you to give me (at this point...) is a
-	tree representing the structure of the program (instead of a list/set we were talking about)...
-	 take a look below at CTree i have created and u will understand...
-
-*/
+// @ Andre: almost everything is done...i managed to return to the main method the actual root of the tree...but the problem is as i told u
+//on whats app that this is always null...take a look at lines 225-232....the insertion seems ok.... we have to see y it is not working...
+// to be continued tomorrow....
+// also take a look at line 253 - 260....
 
 //data ProjectStructure = fragment(int il, int fl, loc location, list[tuple[loc cloneLocation, int typee]])
 //| folderOrFile(str name,int fragmentsIncluded, list[ProjectStructure] internalTrees);
@@ -34,7 +33,6 @@ Figure formBoxes(ProjectStructure nodee) {
 			// give an id = src/package1/file1/fragment1
 			// onClick = for(i « list(clones)) » id
 			
-
 	}
 	
 	return fig;
@@ -100,49 +98,34 @@ void runVisualization() {
 	clones = findClones(|project://softEvolTest|, 30); // why 30??
 	ProjectStructure tree = createTree(clones, "softEvolTest");
 	
+	println("***************************");
+	println("**Final fuckin tree below**");
+	println("***************************");
+	
 	println(tree);
 	
-	render(visualize(tree));
+	//render(visualize(tree));
 }
 
-data ProjectStructure = fragment(int bl, int el, loc id, list[tuple[loc cloneLocation, int typee]] clones)
-| folderOrFile(str name, int numberOfFragments, list[ProjectStructure] internalTrees);
+data ProjectStructure = fragment(int bl, int el, list[tuple[loc cloneLocation, int typee]] clones)	// insert id again!
+| folderOrFile(str name, int numberOfFragments, list[ProjectStructure] internalTrees, list [ProjectStructure] previous);
 
-// <|file:///C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java|(508,281,<18,1>,<28,2>),
-//  |file:///C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java|(796,281,<30,1>,<40,2>),2>
 
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootNode) {
-	ProjectStructure tree = folderOrFile(rootNode, 0, []);
+	ProjectStructure tree = folderOrFile(rootNode, 0, [], []);
 	
+	println("skata");
 	println(tree);
 		
-	for(pair <- clonePairs) {
-		//str uri_1 = pair.n1.uri;
-		//str uri_2 = pair.n2.uri;
-		//int bl_1 = pair.n1.BL; 	
-		//int el_1 = pair.n1.EL;
-		//int bl_2 = pair.n2.BL; 	
-		//int el_2 = pair.n2.EL; 
-		//list[str] nodes1 = parseToListOfNodes(uri_1);
-		//list[str] nodes2 = parseToListOfNodes(uri_2);	 	
+	//for(pair <- clonePairs) {
+	
+		pair = clonePairs[0];
 			
-		tree = insert2Leafs(tree, pair, rootNode);
-		//println(tree);
+		tree = insert2Leafs(tree, pair, rootNode);		// i changed this...
 		
-		//if (fragmentInTree(tree, pair.l1)) {
-		//	tree = updateTree(tree, pair.l1, pair.l2, pair.t); 	
-		//} else {
-		//	tree = insertNewLeaf(tree, nodes1, bl_1, el_1, pair.n1);
-		//	tree = updateTree(tree, pair.l1, pair.l2, pair.t); 
-		//}
-		//
-		//if (fragmentInTree(tree, pair.l2)) {
-		//	tree = updateTree(tree, pair.l2, pair.l1, pair.t); 	
-		//} else {
-		//	tree = insertNewLeaf(tree, nodes2, bl_2, el_2, pair.n2);
-		//	tree = updateTree(tree, pair.l2, pair.l1, pair.t); 
-		//}				
-	}
+		println(tree);
+					
+	//}
 	return tree;
 }
 
@@ -152,34 +135,8 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 	list[str] pathForInsertion = split("/",aux);
 	str aux1 = pair.l2.uri[pos+size(rootNode)+1..];		
 	list[str] pathForInsertion1 = split("/",aux1);
-	//str prevNode = rootNode;
-	//ProjectStructure currentNode = tree;
 	
-	//for(n <- pathForInsertion) {
-	//
-	//	if (n in currentNode.internalTrees) {
-	//		currentNode.numberOfFragments += 1;
-	//		position = indexOf(currentNode.internalTrees, n);
-	//		currentNode = currentNode.internalTrees[position];
-	//	}
-	//	
-	//	else {
-	//		currentNode.numberOfFragments += 1;
-	//		currentNode.internalTrees += folderOrFile(n, 0, []);
-	//		position = indexOf(currentNode.internalTrees, n);
-	//		currentNode = currentNode.internalTrees[position];
-	//	}
-	//	
-	//	//currentNode = visitTreeAndInsertNodeIfNecessary(currentNode, n);
-	//
-	//	 //if(!nodeInTree(tree, n)) {
-	//	 //	tree = insertNewNode(tree, prevNode, n);
-	//	 //} 
-	//	 //else {
-	//	 //	//tree = incrementNodeCounter(tree, prevNode);		 	
-	//	 //}
-	//	 //prevNode = n;
-	//}
+	println(pathForInsertion);
 	
 	tree = insertPathOfNodesAndLeaf(tree, pathForInsertion, pair);	
 	//tree = insertPathOfNodesAndLeaf(tree, pathForInsertion1, pair);	
@@ -188,13 +145,8 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 }
 
 
-//ProjectStructure insertNewFragment(ProjectStructure tree, str last(pathForInsertion), tuple[loc l1, loc l2, int t] pair) {
-//	
-//}
-
 ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair) {
 
-	//println(tree);
 	if(isEmpty(pathForInsertion)) {		// time for a leaf....
 	
 		println("leaf");
@@ -208,11 +160,26 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 			}
 		}
 		
-		if (flag2) {						// new leaf to be inserted....
+		if (!flag2) {						// new leaf to be inserted....
+			println("I am inserting a leaf...");
 			tree.numberOfFragments += 1;
 			ProjectStructure fragment = createFragment(pair);
-			tree.internalTrees += fragment;
+			tree.internalTrees = tree.internalTrees + fragment;
 		}
+		
+		
+		// y the fuck do we return this?????		
+		
+		while (!isEmpty(tree.previous)) {
+		
+		println("ektypwnw to previous...");
+		println(tree.previous);
+		println("...................");
+		
+			tree = tree.previous[0];
+		
+		}
+		
 		return tree;
 	}
 	
@@ -221,58 +188,79 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 		println("node");
 		
 		bool flag = false;
-		for(i <- tree.internalTrees) {
 		
-			//println(i.name);
-			//println(pathForInsertion[0]);
+		visit(tree.internalTrees) {
+		
+			// below needs to break....maybe nested staff...
+					
+			case folderOrFile(name,numberOfFragments, internalTrees, previous): if (name == pathForInsertion[0] ) flag = true;
+		
+		}
+		
+		
+		// below just DOES NOT WORK!
+		
+	/*	for(i <- tree.internalTrees) {
+		
+			println(i.name);
+			//println(pathForInsertion[0]);		
 			
 			if (i.name == pathForInsertion[0]) {
 				flag = true;
 				break;
-			}
-		}
-		
-		//if(pathForInsertion[0] in tree.internalTrees.name) {
-		//if (flag) {	
-		//	tree.numberOfFragments += 1;
-		//	position = indexOf(tree.internalTrees, n);
-		//	tree = tree.internalTrees[position];
-		//	return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
-		//}		
-		//else {
-		//	tree.numberOfFragments += 1;
-		//	tree.internalTrees = tree.internalTrees + folderOrFile(pathForInsertion[0], 0, []);
-		//	position = indexOf(tree.internalTrees, n);
+			}   
+		}*/
+
 			
-		if (flag) {			
+		if (flag) {		
+		
+			println("node exists!");	
 			tree.numberOfFragments += 1;
 			for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;
 			return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
 		}		
+		
 		else {
-			//println("hey");
+			println("node doesnt exist! I will add <pathForInsertion[0]>");
 			tree.numberOfFragments += 1;
-			tree.internalTrees = tree.internalTrees + folderOrFile(pathForInsertion[0], 0, []);
-			for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;		
 			
+			println("before");
+			println("for the tree <tree> i have <tree.internalTrees>");
+			
+			tree.internalTrees = tree.internalTrees + folderOrFile(pathForInsertion[0], 0, [], []+tree);
+			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;					////
+			
+			println("after insertion");
+			println("for the tree <tree> i have <tree.internalTrees>");
+			
+			
+			visit(tree.internalTrees) {
+		
+			// below needs to break....maybe nested staff...
 					
-			//println("shit");
-			//println(tree);
+			case folderOrFile(name,numberOfFragments, internalTrees,previous): if (name == pathForInsertion[0] ) tree = folderOrFile(name,numberOfFragments, internalTrees,previous);
+		
+		}
 			
 			return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
 		}
 		
-		//	return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
-		//}
 	}
 }
 
 ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {
-	int bl = pair.l1.BL; 	
-	int el = pair.l1.EL;
-	id = pair.l1;
-	clones = [<pair.l2, pair.typee>];
-	return fragment(bl, el, id, clones);
+
+	/* wtf r u doin here????? */
+	int bl = 0; int el = 0;
+	//int bl = pair.l1.BL; 	
+	//int el = pair.l1.EL;
+	
+	// only for now remove this....	// from the type of the leaf as well...
+	
+	//id = pair.l1;
+	
+	clones = [<pair.l2, pair.t>];
+	return fragment(bl, el, clones);	// needs an id
 }
 
 //ProjectStructure incrementNodeCounter(ProjectStructure tree, str n) {
@@ -281,11 +269,6 @@ ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {
 //	}
 //}
 
-//ProjectStructure insertNewNode(ProjectStructure tree, str prevNode, str newNode) {
-//	return visit(tree) {
-//		case folderOrFile(prevNode, numbNodes, nodes) => folderOrFile(prevNode, numbNodes + 1 , nodes + folderOrFile(newNode, 0, []))	
-//	}
-//}
 
 //bool nodeInTree(ProjectStructure tree, str n) {
 //	top-down visit(tree) {
@@ -293,20 +276,12 @@ ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {
 //	}
 //}
 
-//ProjectStructure insertNode(ProjectStructure)
-
 //bool fragmentInTree(ProjectStructure tree, loc l) {
 //	visit(tree) {
 //		case fragment(_, _, l, _) : return true;
 //	}
 //}
 //
-//ProjectStructure updateTree(ProjectStructure tree, loc l1, loc l2, int typee) {
-//	return visit(tree) {
-//		case fragment(_, _, l1, clones) => fragment(_, _, l1, clones + <l2,typee>)		
-//	}
-//}
-
 //void test () {
 //	loc project = |file:///C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java|(508,281,<18,1>,<28,2>);
 //	str a = project.uri;
