@@ -49,8 +49,14 @@ Figure visualize(ProjectStructure tree) {
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 	clones = findClones(|project://softEvolTest|, 30); // why 30??
+	//clones = findClones(|project://smallsql0.21_src|, 30);
 	ProjectStructure tree = createTree(clones, "softEvolTest");	
 	println("final tree: <tree>");	
+	
+	while (size(tree.internalTrees) == 1) {
+		tree = internalTrees[0];
+	
+	}
 	render(visualize(tree));
 }
 
@@ -86,8 +92,7 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 
 
 ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair) {	
-	if(isEmpty(pathForInsertion)) {		// time for add a leaf	
-		
+	if(isEmpty(pathForInsertion)) {		// time for add a leaf			
 		bool flag2 = false;
 		for(i <- tree.internalTrees) {			
 			if (pair.l1 == i.l) {				
@@ -102,7 +107,7 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 		if (!flag2) {	// new leaf to be inserted....												
 			ProjectStructure fragment = createFragment(pair);
 			//println("before: <tree>");
-			tree.numberOfFragments = tree.numberOfFragments + 1;			
+			//tree.numberOfFragments = tree.numberOfFragments + 1;			
 			tree.internalTrees = tree.internalTrees + fragment;
 			//println("leaf: <tree>");
 		}
@@ -129,7 +134,7 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 				case folderOrFile(x, y, z) :  if (x == pathForInsertion[0]) tree = folderOrFile(pathForInsertion[0], y, z);				
 			}
 			
-			tree.numberOfFragments = tree.numberOfFragments + 1;
+			//tree.numberOfFragments = tree.numberOfFragments + 1;
 			
 			//println("newTree: <tree>");
 			
@@ -140,7 +145,7 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 		}		
 		
 		else { // Node doesn't exit yet. create it			
-			tree.numberOfFragments = tree.numberOfFragments + 1;									
+			//tree.numberOfFragments = tree.numberOfFragments + 1;									
 			newNode = folderOrFile(pathForInsertion[0], 0, []);	
 			return insertInSubTrees(tree, insertPathOfNodesAndLeaf(newNode, tail(pathForInsertion), pair));
 		}		
@@ -155,7 +160,7 @@ ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTre
 	}
 	
 	if (!flag) {
-		tree.numberOfFragments = tree.numberOfFragments + 1;
+		subTree.numberOfFragments = subTree.numberOfFragments + 1;
 		tree.internalTrees = tree.internalTrees + subTree;
 	} else { // update list of leaves
 	
@@ -168,9 +173,10 @@ ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTre
 				updatedNode = folderOrFile(x, y, subTree.internalTrees);
 			}
 		}
-		tree.numberOfFragments = tree.numberOfFragments + 1;
+		updatedNode.numberOfFragments = updatedNode.numberOfFragments + 1;
 		tree.internalTrees = tree.internalTrees + updatedNode;
 	}
+	
 	return tree;
 }
 
