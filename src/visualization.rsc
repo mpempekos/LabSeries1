@@ -151,7 +151,7 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair) {
 	println("pathForInsertion: <pathForInsertion>");
 	if(isEmpty(pathForInsertion)) {		// time for add a leaf
-	
+		
 		//println("leaf");
 	
 		bool flag2 = false;
@@ -163,13 +163,17 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 			}
 		}
 		
-		//println(flag2);
+		//println("fragment flag: <flag2>");
 		
-		if (!flag2) {						// new leaf to be inserted....
+		if (!flag2) {	
+						// new leaf to be inserted....
 			//println("I am inserting a leaf...");
 			tree.numberOfFragments += 1;
+				
 			ProjectStructure fragment = createFragment(pair);
+			//println("before: <tree>");
 			tree.internalTrees = tree.internalTrees + fragment;
+			//println("leaf: <tree>");
 		}
 						
 		return tree;
@@ -183,33 +187,25 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 			case folderOrFile(name, _, _): if (name == pathForInsertion[0] ) flag = true;		
 		}
 		
-		println(flag);	
-		
-		tree.numberOfFragments = tree.numberOfFragments + 1;	
+		println(flag);					
 			
 		if (flag) {	 // Node already existis. add 1 to numberOfFragments			
-			//println("Node exists!");	
-			
-			
-			println(tree);
-			
-			ProjectStructure originalTree = tree;
-			
+			//println("Node exists!");						
+			println(tree);			
+			ProjectStructure originalTree = tree;			
 			visit (tree) {
-				
-					case folderOrFile(x, y, z) :  if (x == pathForInsertion[0]) tree = folderOrFile(pathForInsertion[0], y, z);
-				
+				case folderOrFile(x, y, z) :  if (x == pathForInsertion[0]) tree = folderOrFile(pathForInsertion[0], y, z);				
 			}
+			//println("newTree: <tree>");
 			
-			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;
-			println("after for: <tree>");
+			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;			
 			
 			//return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
-			return insertInSubTrees(originalTree, insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair));
-		
+			return insertInSubTrees(originalTree, insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair));		
 		}		
 		
-		else { // Node doesn't exit yet. create it											
+		else { // Node doesn't exit yet. create it			
+			tree.numberOfFragments = tree.numberOfFragments + 1;									
 			newNode = folderOrFile(pathForInsertion[0], 0, []);	
 			return insertInSubTrees(tree, insertPathOfNodesAndLeaf(newNode, tail(pathForInsertion), pair));
 		}		
@@ -218,15 +214,23 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 
 ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTree) {
 	bool flag = false;
-	
-	
+		
 	visit(tree.internalTrees) {
 	
 		case folderOrFile(x, y, z) : if(x == subTree.name) flag = true; 
 	}
 	
-	if (!flag)
+	if (!flag) {
+		tree.numberOfFragments = tree.numberOfFragments + 1;
 		tree.internalTrees = tree.internalTrees + subTree;
+	} else { // update list of leaves
+	
+		println("Internal trees below...");
+		println(tree.internalTrees);
+		visit(tree.internalTrees) {
+			case folderOrFile(x, y, z) : if(x == subTree.name) return folderOrFile(x, y, subTree.internalTrees);
+		}
+	}
 	return tree;
 }
 
