@@ -114,7 +114,6 @@ data ProjectStructure = fragment(int bl, int el, list[tuple[loc cloneLocation, i
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootNode) {
 	ProjectStructure tree = folderOrFile(rootNode, 0, [], []);
 	
-	println("skata");
 	println(tree);
 		
 	//for(pair <- clonePairs) {
@@ -123,7 +122,6 @@ ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str r
 			
 		tree = insert2Leafs(tree, pair, rootNode);		// i changed this...
 		
-		println(tree);
 					
 	//}
 	return tree;
@@ -185,7 +183,6 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 	
 	else { 		//time for a node
 	
-		println("node");
 		
 		bool flag = false;
 		
@@ -214,25 +211,25 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 			
 		if (flag) {		
 		
-			println("node exists!");	
+			println("Node exists!");	
 			tree.numberOfFragments += 1;
 			for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;
 			return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
 		}		
 		
 		else {
-			println("node doesnt exist! I will add <pathForInsertion[0]>");
+			println("Node doesnt exist! I will add <pathForInsertion[0]>");
 			tree.numberOfFragments += 1;
 			
-			println("before");
-			println("for the tree <tree> i have <tree.internalTrees>");
 			
 			tree.internalTrees = tree.internalTrees + folderOrFile(pathForInsertion[0], 0, [], []+tree);
+			
+			
 			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;					////
 			
-			println("after insertion");
+			println("After insertion");
 			println("for the tree <tree> i have <tree.internalTrees>");
-			
+		
 			
 			visit(tree.internalTrees) {
 		
