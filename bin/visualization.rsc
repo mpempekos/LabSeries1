@@ -30,7 +30,7 @@ Figure formBoxes(ProjectStructure nodee) {
 			
 		case fragment(bl, el, l, _):	// fragment(list(clones)) 
 			
-			fig = box(text("<el>,<bl>"),id("1"),area(1));	// to do --> fillColor...
+			fig = box(text("<bl>,<el>"),id("1"),area(1));	// to do --> fillColor...
 			// give an id = src/package1/file1/fragment1
 			// onClick = for(i « list(clones)) » id
 			
@@ -103,7 +103,7 @@ void runVisualization() {
 	//println("**Final fuckin tree below**");
 	//println("***************************");
 	
-	//println("final tree: <tree>");
+	println("final tree: <tree>");
 	
 	render(visualize(tree));
 }
@@ -117,14 +117,14 @@ ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str r
 	
 	//println(tree);
 		
-	//for(pair <- clonePairs) {
+	for(pair <- clonePairs) {
 	
-		pair = clonePairs[0];
+		//pair = clonePairs[0];
 			
 		tree = insert2Leafs(tree, pair, rootNode);		// i changed this...
 		
 					
-	//}
+	}
 	return tree;
 }
 
@@ -141,15 +141,15 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 	//println("<tree>, <pathForInsertion>, <pair>");
 	tree = insertPathOfNodesAndLeaf(tree, pathForInsertion, pair);
 	tuple[loc l1, loc l2, int t] reversedPair = <pair.l2, pair.l1, pair.t>;
-	println("FIRST PAIR CLONE ADDED: <tree>");	
+	//println("FIRST PAIR CLONE ADDED: <tree>");	
 	tree = insertPathOfNodesAndLeaf(tree, pathForInsertion1, reversedPair);	
-	println("SECOND PAIR CLONE ADDED: <tree>");			
+	//println("SECOND PAIR CLONE ADDED: <tree>");			
 	return tree;
 }
 
 
 ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair) {
-	println("pathForInsertion: <pathForInsertion>");
+	//println("pathForInsertion: <pathForInsertion>");
 	if(isEmpty(pathForInsertion)) {		// time for add a leaf
 		
 		//println("leaf");
@@ -168,10 +168,11 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 		if (!flag2) {	
 						// new leaf to be inserted....
 			//println("I am inserting a leaf...");
-			tree.numberOfFragments += 1;
+			tree.numberOfFragments = tree.numberOfFragments + 1;
+
 				
 			ProjectStructure fragment = createFragment(pair);
-			//println("before: <tree>");
+			//println("before: <tree>");			
 			tree.internalTrees = tree.internalTrees + fragment;
 			//println("leaf: <tree>");
 		}
@@ -187,15 +188,19 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 			case folderOrFile(name, _, _): if (name == pathForInsertion[0] ) flag = true;		
 		}
 		
-		println(flag);					
+		//println(flag);					
 			
 		if (flag) {	 // Node already existis. add 1 to numberOfFragments			
 			//println("Node exists!");						
-			println(tree);			
+			//println(tree);		
+				
 			ProjectStructure originalTree = tree;			
 			visit (tree) {
 				case folderOrFile(x, y, z) :  if (x == pathForInsertion[0]) tree = folderOrFile(pathForInsertion[0], y, z);				
 			}
+			
+			//tree.numberOfFragments = tree.numberOfFragments + 1;
+			
 			//println("newTree: <tree>");
 			
 			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;			
@@ -215,8 +220,7 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTree) {
 	bool flag = false;
 		
-	visit(tree.internalTrees) {
-	
+	visit(tree.internalTrees) {	
 		case folderOrFile(x, y, z) : if(x == subTree.name) flag = true; 
 	}
 	
@@ -225,11 +229,17 @@ ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTre
 		tree.internalTrees = tree.internalTrees + subTree;
 	} else { // update list of leaves
 	
-		println("Internal trees below...");
-		println(tree.internalTrees);
+		//println("Internal trees below...");
+		//println(tree.internalTrees);
+		ProjectStructure updatedNode = folderOrFile("error", 0, []); 
 		visit(tree.internalTrees) {
-			case folderOrFile(x, y, z) : if(x == subTree.name) return folderOrFile(x, y, subTree.internalTrees);
+			case folderOrFile(x, y, z) : if(x == subTree.name) {
+				tree.internalTrees = tree.internalTrees - folderOrFile(x, y, z);
+				updatedNode = folderOrFile(x, y, subTree.internalTrees);
+			}
 		}
+		tree.numberOfFragments = tree.numberOfFragments + 1;
+		tree.internalTrees = tree.internalTrees + updatedNode;
 	}
 	return tree;
 }
