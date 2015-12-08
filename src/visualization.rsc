@@ -26,10 +26,11 @@ Figure formBoxes(ProjectStructure nodee) {
 		
 	switch (nodee) {
 		case folderOrFile(name,N,internalNodes): 
-			fig = box(vcat([text(nodee.name),visualize(nodee)]), area(nodee.fragmentsIncluded));
+			fig = box(vcat([text(nodee.name),visualize(nodee)]), area(nodee.numberOfFragments));
 			
-		case fragment(n):	// fragment(list(clones)) 
-			fig = box(text(n),id("1"),area(1));	// to do --> fillColor...
+		case fragment(bl, el, l, _):	// fragment(list(clones)) 
+			
+			fig = box(text("<el>,<bl>"),id("1"),area(1));	// to do --> fillColor...
 			// give an id = src/package1/file1/fragment1
 			// onClick = for(i « list(clones)) » id
 			
@@ -98,23 +99,23 @@ void runVisualization() {
 	clones = findClones(|project://softEvolTest|, 30); // why 30??
 	ProjectStructure tree = createTree(clones, "softEvolTest");
 	
-	println("***************************");
-	println("**Final fuckin tree below**");
-	println("***************************");
+	//println("***************************");
+	//println("**Final fuckin tree below**");
+	//println("***************************");
 	
-	println(tree);
+	//println("final tree: <tree>");
 	
-	//render(visualize(tree));
+	render(visualize(tree));
 }
 
-data ProjectStructure = fragment(int bl, int el, list[tuple[loc cloneLocation, int typee]] clones)	// insert id again!
-| folderOrFile(str name, int numberOfFragments, list[ProjectStructure] internalTrees, list [ProjectStructure] previous);
+data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLocation, int typee]] clones)	// insert id again!
+| folderOrFile(str name, int numberOfFragments, list[ProjectStructure] internalTrees);
 
 
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootNode) {
-	ProjectStructure tree = folderOrFile(rootNode, 0, [], []);
+	ProjectStructure tree = folderOrFile(rootNode, 0, []);
 	
-	println(tree);
+	//println(tree);
 		
 	//for(pair <- clonePairs) {
 	
@@ -134,153 +135,101 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 	str aux1 = pair.l2.uri[pos+size(rootNode)+1..];		
 	list[str] pathForInsertion1 = split("/",aux1);
 	
-	println(pathForInsertion);
+	//pathForInsertion = ["A", "B", "C"]; // JUST FOR TEST
 	
-	tree = insertPathOfNodesAndLeaf(tree, pathForInsertion, pair);	
-	//tree = insertPathOfNodesAndLeaf(tree, pathForInsertion1, pair);	
-		
+	//println(pathForInsertion);
+	//println("<tree>, <pathForInsertion>, <pair>");
+	tree = insertPathOfNodesAndLeaf(tree, pathForInsertion, pair);
+	tuple[loc l1, loc l2, int t] reversedPair = <pair.l2, pair.l1, pair.t>;
+	println("FIRST PAIR CLONE ADDED: <tree>");	
+	tree = insertPathOfNodesAndLeaf(tree, pathForInsertion1, reversedPair);	
+	println("SECOND PAIR CLONE ADDED: <tree>");			
 	return tree;
 }
 
 
 ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair) {
-
-	if(isEmpty(pathForInsertion)) {		// time for a leaf....
+	println("pathForInsertion: <pathForInsertion>");
+	if(isEmpty(pathForInsertion)) {		// time for add a leaf
 	
-		println("leaf");
+		//println("leaf");
 	
 		bool flag2 = false;
 		for(i <- tree.internalTrees) {
-			if (pair.l1 == i.id) {
+			if (pair.l1 == i.l) {
 				i.clones += <l2,t>;
 				flag2 = true;
 				break;
 			}
 		}
 		
+		//println(flag2);
+		
 		if (!flag2) {						// new leaf to be inserted....
-			println("I am inserting a leaf...");
+			//println("I am inserting a leaf...");
 			tree.numberOfFragments += 1;
 			ProjectStructure fragment = createFragment(pair);
 			tree.internalTrees = tree.internalTrees + fragment;
 		}
-		
-		
-		// y the fuck do we return this?????		
-		
-		while (!isEmpty(tree.previous)) {
-		
-		println("ektypwnw to previous...");
-		println(tree.previous);
-		println("...................");
-		
-			tree = tree.previous[0];
-		
-		}
-		
+						
 		return tree;
 	}
 	
-	else { 		//time for a node
-	
-		
+	else { 		//time for a node			
 		bool flag = false;
 		
-		visit(tree.internalTrees) {
-		
-			// below needs to break....maybe nested staff...
-					
-			case folderOrFile(name,numberOfFragments, internalTrees, previous): if (name == pathForInsertion[0] ) flag = true;
-		
+		visit(tree) {		
+			// below needs to break....maybe nested staff...				
+			case folderOrFile(name, _, _): if (name == pathForInsertion[0] ) flag = true;		
 		}
 		
+		println(flag);	
 		
-		// below just DOES NOT WORK!
-		
-	/*	for(i <- tree.internalTrees) {
-		
-			println(i.name);
-			//println(pathForInsertion[0]);		
+		tree.numberOfFragments = tree.numberOfFragments + 1;	
 			
-			if (i.name == pathForInsertion[0]) {
-				flag = true;
-				break;
-			}   
-		}*/
-
+		if (flag) {	 // Node already existis. add 1 to numberOfFragments			
+			//println("Node exists!");	
 			
-		if (flag) {		
+			
+			println(tree);
+			
+			ProjectStructure originalTree = tree;
+			
+			visit (tree) {
+				
+					case folderOrFile(x, y, z) :  if (x == pathForInsertion[0]) tree = folderOrFile(pathForInsertion[0], y, z);
+				
+			}
+			
+			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;
+			println("after for: <tree>");
+			
+			//return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
+			return insertInSubTrees(originalTree, insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair));
 		
-			println("Node exists!");	
-			tree.numberOfFragments += 1;
-			for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;
-			return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
 		}		
 		
-		else {
-			println("Node doesnt exist! I will add <pathForInsertion[0]>");
-			tree.numberOfFragments += 1;
-			
-			
-			tree.internalTrees = tree.internalTrees + folderOrFile(pathForInsertion[0], 0, [], []+tree);
-			
-			
-			//for(n <- tree.internalTrees) if(n.name == pathForInsertion[0]) tree = n;					////
-			
-			println("After insertion");
-			println("for the tree <tree> i have <tree.internalTrees>");
-		
-			
-			visit(tree.internalTrees) {
-		
-			// below needs to break....maybe nested staff...
-					
-			case folderOrFile(name,numberOfFragments, internalTrees,previous): if (name == pathForInsertion[0] ) tree = folderOrFile(name,numberOfFragments, internalTrees,previous);
-		
-		}
-			
-			return insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair);
-		}
-		
+		else { // Node doesn't exit yet. create it											
+			newNode = folderOrFile(pathForInsertion[0], 0, []);	
+			return insertInSubTrees(tree, insertPathOfNodesAndLeaf(newNode, tail(pathForInsertion), pair));
+		}		
 	}
 }
 
-ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {
-
-	/* wtf r u doin here????? */
-	int bl = 0; int el = 0;
-	//int bl = pair.l1.BL; 	
-	//int el = pair.l1.EL;
+ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTree) {
+	bool flag = false;
 	
-	// only for now remove this....	// from the type of the leaf as well...
 	
-	//id = pair.l1;
+	visit(tree.internalTrees) {
 	
-	clones = [<pair.l2, pair.t>];
-	return fragment(bl, el, clones);	// needs an id
+		case folderOrFile(x, y, z) : if(x == subTree.name) flag = true; 
+	}
+	
+	if (!flag)
+		tree.internalTrees = tree.internalTrees + subTree;
+	return tree;
 }
 
-//ProjectStructure incrementNodeCounter(ProjectStructure tree, str n) {
-//	return visit(tree) {
-//		case folderOrFile(n, numbNodes, _) => folderOrFile(n, numbNodes + 1 , _)	
-//	}
-//}
-
-
-//bool nodeInTree(ProjectStructure tree, str n) {
-//	top-down visit(tree) {
-//				case folderOrFile(n, _, l) : return true;
-//	}
-//}
-
-//bool fragmentInTree(ProjectStructure tree, loc l) {
-//	visit(tree) {
-//		case fragment(_, _, l, _) : return true;
-//	}
-//}
-//
-//void test () {
-//	loc project = |file:///C:/Users/andre/OneDrive/Documents/GitHub/LabSeries1/softEvolTest/src/softEvolTest/ClassA.java|(508,281,<18,1>,<28,2>);
-//	str a = project.uri;
-//	println(a);
-//}
+ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {	
+	return fragment(pair.l1.begin.line, pair.l1.end.line, pair.l1, [<pair.l2, pair.t>]);
+}
