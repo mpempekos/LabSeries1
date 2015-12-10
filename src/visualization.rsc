@@ -149,11 +149,15 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 		for(i <- tree.internalTrees) {			
 			if (pair.l1 == i.l) {			
 			
+			println("**********************");
 			println("Before add: <i.clones>");	
+				
+				
 				i.clones += [<pair.l2,pair.t>];
 				
 			println("After add: <i.clones>");	
-				
+			println("**********************");
+			
 				flag2 = true;
 				break;
 			}
