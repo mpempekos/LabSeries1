@@ -152,7 +152,7 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 				
 				i.clones += [<pair.l2,pair.t>];
 				
-				//below is added indeed...
+				//below is added indeed...  check line 170...
 				
 			println("After add: <i.clones>");	
 			println("**********************");
