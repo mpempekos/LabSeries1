@@ -11,6 +11,8 @@ import vis:: Figure;
 import vis:: Render;
 import lab2;
 import ListRelation;
+import myTree;
+import vis::KeySym;
 
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
@@ -105,9 +107,21 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 			// map box to the leaf
 			
 			
-			fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
-	onMouseEnter(void () { c = true; colorClones(clones2,originalTree); }), onMouseExit(void () { c = false ; })
-	,shrink(0.5));
+	//		fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
+	//onMouseEnter(void () { c = true; colorClones(clones2,originalTree); }), onMouseExit(void () { c = false ; })
+	//,shrink(0.5));
+	
+	
+	
+	// BUGGGGG!!
+		
+	fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("white"),
+	onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
+		//s = "<butnr>";
+		println("skata");
+		
+		return true;
+	}));
 	
 	// on click....get from map the leaves u want.... and color the boxes
 			}		
@@ -234,11 +248,112 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 | folderOrFile(str name, int numberOfFragments, list[ProjectStructure] internalTrees);
 
 
+
+
+
+
+
+///* src will be the last single node in the tree... */
+
+
+//Figure formBoxes(ProjectStructure nodee,list[tuple[loc l1, loc l2, int t]] clones,ProjectStructure tree) {
+//
+//	Figure fig ;
+//		
+//	switch (nodee) {
+//		case folderOrFile(name,N,internalNodes): 
+//			fig = box(vcat([text(nodee.name),visualize(nodee,[])]), area(nodee.numberOfFragments));
+//			//fig = treemap([vcat([text(name),visualize(nodee,[])])], area(nodee.numberOfFragments));
+//		case fragment(bl, el, l, clones2): {	
+//		
+//			if (l <- clones.l1) 
+//				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));
+//		
+//			else {
+//			
+//			c = false;
+//			// map box to the leaf
+//			
+//			
+//			fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
+//	onMouseEnter(void () { c = true; colorClones(clones,tree); }), onMouseExit(void () { c = false ; })
+//	,shrink(0.5));
+//	
+//	// on click....get from map the leaves u want.... and color the boxes
+//			}		
+//				leavesToBoxes += (l:fig);
+//	
+//		}
+//			
+//	}	
+//	return fig;
+//}
+//
+
+//
+//
+//Figure visualize(ProjectStructure tree,list[tuple[loc l1, loc l2, int t]] clones) {
+//	//Figure fig;
+//	
+//	println("visiting tree....");
+//	println("*************");
+//	
+//	switch (tree) {
+//		case folderOrFile(name,N,internalNodes): { 
+//			Figures figs = [];
+//			
+//			for (i <- internalNodes){
+//			  	figs += formBoxes(i,clones,tree);		// edw i mlkia...?
+//		  	}		  
+//		  	// edw case leaf???		  			  
+//		  	fig = treemap(figs);		  	
+//		}			
+//		//case fragment(name): fig = box(text(name),area(1));
+//	}	
+//	
+//	
+//	return fig;
+//}
+//
+//
+//Figure formBoxes(ProjectStructure nodee,list[tuple[loc l1, loc l2, int t]] clones,ProjectStructure tree) {
+//
+//	Figure fig ;
+//		
+//	switch (nodee) {
+//		case folderOrFile(name,N,internalNodes): 
+//			fig = box(vcat([text(nodee.name),visualize(nodee,[])]), area(nodee.numberOfFragments));
+//			//fig = treemap([vcat([text(name),visualize(nodee,[])])], area(nodee.numberOfFragments));
+//		case fragment(bl, el, l, clones2): {	
+//		
+//			if (l <- clones.l1) 
+//				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));
+//		
+//			else {
+//			
+//			c = false;
+//			// map box to the leaf
+//			
+//			
+//			fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
+//	onMouseEnter(void () { c = true; colorClones(clones,tree); }), onMouseExit(void () { c = false ; })
+//	,shrink(0.5));
+//	
+//	// on click....get from map the leaves u want.... and color the boxes
+//			}		
+//				leavesToBoxes += (l:fig);
+//	
+//		}
+//			
+//	}	
+//	return fig;
+//}
+
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootName) {
 	// create root node
 	ProjectStructure root = folderOrFile(rootName, 0, []);	
 	
-	// insert pairs of clones in the tree
+	// insert pairs of clones in the myTree
 	for(pair <- clonePairs) root = insert2Leafs(root, pair, rootName);	
 			
 	return root;
@@ -339,102 +454,3 @@ ProjectStructure insertInSubTrees(ProjectStructure tree, ProjectStructure subTre
 ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {	
 	return fragment(pair.l1.begin.line, pair.l1.end.line, pair.l1, [<pair.l2, pair.t>]);
 }
-
-
-
-
-///* src will be the last single node in the tree... */
-
-
-//Figure formBoxes(ProjectStructure nodee,list[tuple[loc l1, loc l2, int t]] clones,ProjectStructure tree) {
-//
-//	Figure fig ;
-//		
-//	switch (nodee) {
-//		case folderOrFile(name,N,internalNodes): 
-//			fig = box(vcat([text(nodee.name),visualize(nodee,[])]), area(nodee.numberOfFragments));
-//			//fig = treemap([vcat([text(name),visualize(nodee,[])])], area(nodee.numberOfFragments));
-//		case fragment(bl, el, l, clones2): {	
-//		
-//			if (l <- clones.l1) 
-//				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));
-//		
-//			else {
-//			
-//			c = false;
-//			// map box to the leaf
-//			
-//			
-//			fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
-//	onMouseEnter(void () { c = true; colorClones(clones,tree); }), onMouseExit(void () { c = false ; })
-//	,shrink(0.5));
-//	
-//	// on click....get from map the leaves u want.... and color the boxes
-//			}		
-//				leavesToBoxes += (l:fig);
-//	
-//		}
-//			
-//	}	
-//	return fig;
-//}
-//
-
-//
-//
-//Figure visualize(ProjectStructure tree,list[tuple[loc l1, loc l2, int t]] clones) {
-//	//Figure fig;
-//	
-//	println("visiting tree....");
-//	println("*************");
-//	
-//	switch (tree) {
-//		case folderOrFile(name,N,internalNodes): { 
-//			Figures figs = [];
-//			
-//			for (i <- internalNodes){
-//			  	figs += formBoxes(i,clones,tree);		// edw i mlkia...?
-//		  	}		  
-//		  	// edw case leaf???		  			  
-//		  	fig = treemap(figs);		  	
-//		}			
-//		//case fragment(name): fig = box(text(name),area(1));
-//	}	
-//	
-//	
-//	return fig;
-//}
-//
-//
-//Figure formBoxes(ProjectStructure nodee,list[tuple[loc l1, loc l2, int t]] clones,ProjectStructure tree) {
-//
-//	Figure fig ;
-//		
-//	switch (nodee) {
-//		case folderOrFile(name,N,internalNodes): 
-//			fig = box(vcat([text(nodee.name),visualize(nodee,[])]), area(nodee.numberOfFragments));
-//			//fig = treemap([vcat([text(name),visualize(nodee,[])])], area(nodee.numberOfFragments));
-//		case fragment(bl, el, l, clones2): {	
-//		
-//			if (l <- clones.l1) 
-//				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));
-//		
-//			else {
-//			
-//			c = false;
-//			// map box to the leaf
-//			
-//			
-//			fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
-//	onMouseEnter(void () { c = true; colorClones(clones,tree); }), onMouseExit(void () { c = false ; })
-//	,shrink(0.5));
-//	
-//	// on click....get from map the leaves u want.... and color the boxes
-//			}		
-//				leavesToBoxes += (l:fig);
-//	
-//		}
-//			
-//	}	
-//	return fig;
-//}

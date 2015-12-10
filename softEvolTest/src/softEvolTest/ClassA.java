@@ -26,6 +26,18 @@ public class ClassA {
 		System.out.println(this.a + "+" + this.d + "=");		
 		return this.a + this.d;
 	}
+	
+	public int type1_AAAAAAA(int a, int d) {
+		int age = 0;
+		this.a = a;
+		System.out.println(this.a);
+		if(age == 0) age = 1;
+		if(age == 1) age = 2;
+		this.d = d;				
+		System.out.println(this.a);
+		System.out.println(this.a + "+" + this.d + "=");		
+		return this.a + this.d;
+	}
 		
 	public int type1_a(int a, int d) {
 		int age = 0;
