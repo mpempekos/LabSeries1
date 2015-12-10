@@ -11,7 +11,7 @@ import vis:: Figure;
 import vis:: Render;
 import lab2;
 import ListRelation;
-import myTree;
+//import myTree;
 import vis::KeySym;
 
 public map[loc,Figure] leavesToBoxes = ();
@@ -62,13 +62,25 @@ void runVisualization() {
 	clones = findClones(|project://softEvolTest|, 30); // why 30??
 	//clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
-	ProjectStructure tree = createTree(clones, "softEvolTest");	
+	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));	
 	
 	originalTree = tree;
 	//println("final tree: <tree>");	
 	
 	
 	render(visualize(tree,[]));
+}
+
+ProjectStructure getLastSingleNode(ProjectStructure tree) {
+	top-down visit(tree) {
+		case folderOrFile(name,numberOfFragments,internalTrees): 
+				if (size(internalTrees) != 1) {
+					tree = folderOrFile(name,numberOfFragments,internalTrees);
+					return tree;
+					}
+	}
+
+	return tree;
 }
 
 
@@ -98,6 +110,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 		
 		case fragment(bl, el, l, clones2): {	
 		
+		println("Fragment <l> has these clones: <clones2>");
+		
 			if (l <- clones.l1) 
 				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));
 		
@@ -118,7 +132,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 	fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("white"),
 	onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 		//s = "<butnr>";
-		println("skata");
+		//println("skata");
+		colorClones(clones2,originalTree);
 		
 		return true;
 	}));
@@ -380,8 +395,13 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 	if(isEmpty(pathForInsertion)) {		// time for add a leaf			
 		bool flag2 = false;
 		for(i <- tree.internalTrees) {			
-			if (pair.l1 == i.l) {				
+			if (pair.l1 == i.l) {			
+			
+			//println("Before add: <i.clones>");	
 				i.clones += [<pair.l2,pair.t>];
+				
+			//println("After add: <i.clones>");	
+				
 				flag2 = true;
 				break;
 			}

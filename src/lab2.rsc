@@ -174,18 +174,18 @@ list[tuple[node,node,int]] defineTypeOfClones(list[node] nodes) {
 				//pairs += 1;
 				println("similarity : <similarity>");							
 				if (similarity == 1.0) {														
-				    //clones += <nodes[i],nodes[j],1>;		
-				    continue;		    				   
+				    clones += <nodes[i],nodes[j],1>;		
+				    //continue;		    				   
 				} else {
 					node n1 = normalizeAST(nodes[i]);
 					node n2 = normalizeAST(nodes[j]);
 					similarity = compareTrees(n1, n2);
 					if (similarity == 1.0) {	
-						//clones += <nodes[i],nodes[j],2>;
-						continue;
-					} else if(similarity > 0.80) { // what is the minimum similarity for type-3 ???
-						clones += <nodes[i],nodes[j],3>;
-					} else {
+						clones += <nodes[i],nodes[j],2>;
+						//continue;
+					} //else if(similarity > 0.80) { // what is the minimum similarity for type-3 ???
+						//clones += <nodes[i],nodes[j],3>;}
+						 else {
 						continue;
 					}
 				}

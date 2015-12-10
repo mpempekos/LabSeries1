@@ -18,6 +18,7 @@ import visualization;
  * Situation point:
  *		* Type-1 and Type-2 clones probably done  		
  * 				TODO: create tests for Type-1 and Type-2
+ *				
  *		* Question: Already Finding Clone Sequences??? test
  *		* if change hash function to treeMass. Consequences:
  *				Detecting Type-3 clones but just clones with changed 
@@ -27,13 +28,20 @@ import visualization;
  *					when |lines added - lines removed| != 0 
  *					(still type-3 clones right???)
  */
+//int massToHashvalue(int mass) {
+//		if(mass > 1 && mass < 10) return 1;
+//		else if(mass >= 10 && mass < 20) return 2;
+//		else if(mass >= 20 && mass < 30) return 3;
+//		else return 4;
+//}
+
 list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	println("visiting AST...");
 	//project = |project://hsqldb-2.3.1|;
 	//project = |project://smallsql0.21_src|;
 	//project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
-	map[node, list[node]] buckets = ();	
+	map[int, list[node]] buckets = ();	
 	
 	// visit AST and put node in is corresponding bucket using is hashvalue	
 	visit(projectAST) {		
@@ -41,19 +49,21 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 			if(Declaration _ := t || Statement _ := t) { // explain why???
 				mass = treeMass(t);
 				if(mass >= minNumbNodes) {				
-					node f = normalizeAST(t);
-					//iprintln(f);									
-					if(f in buckets && buckets[f] != []) {
-						buckets[f] += t;
+					//node f = normalizeAST(t);
+					//iprintln(f);		
+					//int hashValue = massToHashvalue(mass);							
+					if(mass in buckets && buckets[mass] != []) {
+						buckets[mass] += t;
 					}
 					else {
-						buckets[f] = [t];
+						buckets[mass] = [t];
 					}								
 				}
 			}						
-	}
+	}	
+	
 	println("defining type of clones...");
-	//for(a <- domain(buckets)) println(size(buckets[a]));	
+	//for(a <- domain(buckets)) println("<a>:<size(buckets[a])>");	
 	
 	list[tuple[node n1,node n2, int t]] newClones = [];
 	//node domain(buckets)
@@ -74,14 +84,14 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	println("############################");	
 	for(pair <- clones) {			
 		if(Statement myDecl := pair.n1) {													
-			l1 = myDecl@src;
+			if (myDecl@src?) l1 = myDecl@src;
 			println("loc: <l1>");
 			println("...........................");
 			nodeLines = readFileLines(l1);
 			for(s <- nodeLines) println(s);								
 		}	
 		if(Declaration myDecl := pair.n1) {											
-			l1 = myDecl@src;
+			if (myDecl@src?) l1 = myDecl@src;
 			println("loc: <l1>");
 			println("...........................");
 			nodeLines = readFileLines(l1);
@@ -89,14 +99,14 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 		}
 		println("#########Type-<pair.t>#############");	
 		if(Statement myDecl := pair.n2) {												
-			l2 = myDecl@src;
+			if (myDecl@src?) l2 = myDecl@src;
 			println("loc: <l2>");
 			println("...........................");
 			nodeLines = readFileLines(l2);
 			for(s <- nodeLines) println(s);								
 		}	
 		if(Declaration myDecl := pair.n2) {											
-			l2 = myDecl@src;
+			if (myDecl@src?) l2 = myDecl@src;
 			println("loc: <l2>");
 			println("...........................");
 			nodeLines = readFileLines(l2);
@@ -158,15 +168,26 @@ list[tuple[node,node,int]] defineTypeOfClones(list[node] nodes) {
 	//real allSim = 0.0;
 	if(size(nodes) > 1) {		
 		for(i <- [0..size(nodes)]) {
-			for(j <- [i+1..size(nodes)]) {
+			for(j <- [i+1..size(nodes)]) {			
 				similarity = compareTrees(nodes[i], nodes[j]);
 				//allSim += similarity;	
 				//pairs += 1;
 				println("similarity : <similarity>");							
-				if (similarity < 1.0) {														
-				    clones += <nodes[i],nodes[j],2>;				    				   
+				if (similarity == 1.0) {														
+				    clones += <nodes[i],nodes[j],1>;		
+				    //continue;		    				   
 				} else {
-					clones += <nodes[i],nodes[j],1>;	
+					node n1 = normalizeAST(nodes[i]);
+					node n2 = normalizeAST(nodes[j]);
+					similarity = compareTrees(n1, n2);
+					if (similarity == 1.0) {	
+						clones += <nodes[i],nodes[j],2>;
+						//continue;
+					} //else if(similarity > 0.80) { // what is the minimum similarity for type-3 ???
+						//clones += <nodes[i],nodes[j],3>;}
+						 else {
+						continue;
+					}
 				}
 			}	
 		}		
