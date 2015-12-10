@@ -160,7 +160,9 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 				flag2 = true;
 				break;
 			}
-		}			
+		}		
+		
+	
 		
 		if (!flag2) {	// new leaf to be inserted....												
 			ProjectStructure fragment = createFragment(pair);			
@@ -168,6 +170,8 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 		}
 		
 		// but in the tree returned it's not...
+		
+		println("#########wtf");
 		println(tree);
 						
 		return tree;
