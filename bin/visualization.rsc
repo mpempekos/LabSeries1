@@ -30,7 +30,7 @@ void runVisualization() {
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));	
 	
 	originalTree = tree;
-	println("final tree: <tree>");	
+	//println("final tree: <tree>");	
 	
 	
 	render(visualize(tree,[]));
@@ -64,7 +64,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 		
 		case fragment(bl, el, l, clones2): {	
 		
-		println("Fragment <l> has these clones: <clones2>");
+		//println("Fragment <l> has these clones: <clones2>");
 		
 			if (l in clones.l1) 
 				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));
@@ -105,9 +105,6 @@ void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructu
 	render(visualize(tree,clones));
 	
 }
-
-
-
 
 
 
@@ -155,6 +152,8 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 				
 				i.clones += [<pair.l2,pair.t>];
 				
+				//below is added indeed...
+				
 			println("After add: <i.clones>");	
 			println("**********************");
 			
@@ -167,6 +166,9 @@ ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathF
 			ProjectStructure fragment = createFragment(pair);			
 			tree.internalTrees = tree.internalTrees + fragment;			
 		}
+		
+		// but in the tree returned it's not...
+		println(tree);
 						
 		return tree;
 	}
