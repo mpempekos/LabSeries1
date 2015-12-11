@@ -91,7 +91,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				else if(numberOfClones < 15) c = color("Blue");
 				else c = color("Black");
 							
-				fig = box(id("<l>"),area(1),fillColor(Color() {return c;}),
+				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					colorClones(clones2,originalTree,l);				
 					return true;
