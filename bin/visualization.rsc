@@ -27,8 +27,8 @@ void runVisualization() {
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
 	originalTree = tree;
-	println("final tree: <tree>");			
-	render(visualize(tree,[]));
+	//println("final tree: <tree>");			
+	render(visualize(tree,[],|project://example-project/src/fuuck.java|));
 }
 
 ProjectStructure getLastSingleNode(ProjectStructure tree) {
@@ -43,42 +43,42 @@ ProjectStructure getLastSingleNode(ProjectStructure tree) {
 }
 
 
-Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {	
+Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones,loc selectedFigLoc) {	
 	switch (tree) {
 		case folderOrFile(name, N, internalNodes): { 
 			Figures figs = [];			
 			for (i <- internalNodes){
-			  	figs += visualize(i,clones);
+			  	figs += visualize(i,clones,selectedFigLoc);
 		  	}
 		  	if(contains(name, ".java"))	{			  			 
 		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));	  
 		  	} else {
 		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
-		  	}	
+		  	}					  			 		  		  
 		}					
 		case fragment(bl, el, l, clones2): {			
 			//println("Fragment <l> has these clones: <clones2>");			
-			if (l in clones.l1)  {
-				// fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));			// (rgb(242,70,70)));	//y u changed it?	
-				c = false;							
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : rgb(252, 73, 73); }),
+			if (l == selectedFigLoc)  {
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("yellow"),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree); c = false;				
+					colorClones(clones2,originalTree,l);				
+					return true;
+				}));
+			}
+			
+			else if (l in clones.l1)  {
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(rgb(252, 73, 73)),		// (rgb(242,70,70)));	//y u changed it?
+				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
+					colorClones(clones2,originalTree,l);				
 					return true;
 				}));
 			}
 			else {			
-				c = false;							
-				//		fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
-				//onMouseEnter(void () { c = true; colorClones(clones2,originalTree); }), onMouseExit(void () { c = false ; })
-				//,shrink(0.5));							
-				// BUGGGGG!!						
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("white"),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree); c = false;				
+					colorClones(clones2,originalTree,l); c = false;				
 					return true;
 				}));				
-				// on click....get from map the leaves u want.... and color the boxes
 			}		
 			leavesToBoxes += (l:fig);	
 		}
@@ -86,9 +86,9 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 	return fig;
 }
 
-void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructure tree) {	
+void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructure tree,loc selectedFigLoc) {	
 	leavesToBoxes = ();
-	render(visualize(tree, clones));	
+	render(visualize(tree, clones,selectedFigLoc));	
 }
 
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootName) {
