@@ -103,9 +103,9 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					case fragment(__, _, l, clonesList): numberOfClones = size(clonesList);
 				}
 				
-				if(numberOfClones == 1) c = color("Green");
-				else if(numberOfClones < 5) c = color("Brown");
-				else if(numberOfClones < 15) c = color("Blue");
+				if(numberOfClones == 1) c = color("lightcyan");
+				else if(numberOfClones < 5) c = color("lightblue");
+				else if(numberOfClones < 15) c = color("royalblue");
 				else c = color("Black");
 							
 				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
