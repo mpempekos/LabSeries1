@@ -74,7 +74,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				else if(typee == 2) c = color("Orange");
 				else c = color("Red");
 				//rgb(252, 73, 73)
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color() {return c;}),		// (rgb(242,70,70)));	//y u changed it?
+				fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(1),fillColor(Color() {return c;}),		// (rgb(242,70,70)));	//y u changed it?
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					colorClones(clones2,originalTree,l);				
 					return true;
