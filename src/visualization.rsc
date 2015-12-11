@@ -68,7 +68,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					if (butnr == 1)
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
-						edit(selectedFigLoc);
+						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
@@ -86,7 +86,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					if (butnr == 1)
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
-						edit(selectedFigLoc);
+						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
@@ -113,7 +113,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					if (butnr == 1)
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
-						edit(selectedFigLoc);
+						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
