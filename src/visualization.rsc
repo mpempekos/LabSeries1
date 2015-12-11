@@ -80,10 +80,20 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					return true;
 				}));
 			}
-			else {			
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(rgb(183, 183, 183)),
+			else {
+				numberOfClones = 0;
+				visit(tree) {
+					case fragment(__, _, l, clonesList): numberOfClones = size(clonesList);
+				}
+				
+				if(numberOfClones == 1) c = color("Green");
+				else if(numberOfClones < 5) c = color("Brown");
+				else if(numberOfClones < 15) c = color("Blue");
+				else c = color("Black");
+							
+				fig = box(id("<l>"),area(1),fillColor(Color() {return c;}),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l); c = false;				
+					colorClones(clones2,originalTree,l);				
 					return true;
 				}));				
 			}		
