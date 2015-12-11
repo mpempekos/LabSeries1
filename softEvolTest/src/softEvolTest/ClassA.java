@@ -41,7 +41,7 @@ public class ClassA {
 		return this.a + this.d;
 	}	
 	
-	public int type1_aaaa(int a, int d) {
+	public int type1_aaaaa(int a, int d) {
 		int age = 0;
 		this.a = a;
 		System.out.println(this.a);
@@ -51,7 +51,7 @@ public class ClassA {
 		System.out.println(this.a);
 		System.out.println(this.a + "+" + this.d + "=");		
 		return this.a + this.d;
-	}	
+	}
 		
 	public class ClassB {
 		private int a;
