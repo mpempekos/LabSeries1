@@ -49,15 +49,19 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 			Figures figs = [];			
 			for (i <- internalNodes){
 			  	figs += visualize(i,clones);
-		  	}				  			 
-		  	fig = box(vcat([text(name),treemap(figs)]),area(N));	  	
+		  	}
+		  	if(contains(name, ".java"))	{			  			 
+		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));	  
+		  	} else {
+		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
+		  	}	
 		}					
 		case fragment(bl, el, l, clones2): {			
 			//println("Fragment <l> has these clones: <clones2>");			
 			if (l in clones.l1)  {
 				// fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));			// (rgb(242,70,70)));	//y u changed it?	
 				c = false;							
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("red"); }),
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : rgb(252, 73, 73); }),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					colorClones(clones2,originalTree); c = false;				
 					return true;

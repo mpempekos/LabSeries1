@@ -183,11 +183,10 @@ list[tuple[node,node,int]] defineTypeOfClones(list[node] nodes) {
 					if (similarity == 1.0) {	
 						clones += <nodes[i],nodes[j],2>;
 						//continue;
-					} //else if(similarity > 0.80) { // what is the minimum similarity for type-3 ???
-						//clones += <nodes[i],nodes[j],3>;}
-						 else {
-						continue;
-					}
+					} else if(similarity > 0.80) { // what is the minimum similarity for type-3 ???
+						clones += <nodes[i],nodes[j],3>;}
+					else continue;
+					
 				}
 			}	
 		}		
