@@ -57,47 +57,71 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
 		  	}					  			 		  		  
 		}					
-		case fragment(bl, el, l, clones2): {
+		case fragment(bl, el, l, clones2): {	
+		
 			c = color("White");			
 			//println("Fragment <l> has these clones: <clones2>");			
 			if (l == selectedFigLoc)  {
 				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("yellow"),
+				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l);			
-					return true;
-				}));
+					if (butnr == 1)
+						colorClones(clones2,originalTree,l);	
+					else if (butnr == 3)
+						edit(selectedFigLoc);
+					return true;}),
+					
+				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
+					if (key == keyEscape())
+						render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+					return true;}));
 			}
 			
+			
 			else if (l in clones.l1)  {
-				int typee = 0;
-				for(clone <- clones) if(l == clone.l1) typee = clone.t;				
-				if(typee == 1) c = color("Pink");
-				else if(typee == 2) c = color("Orange");
-				else c = color("Red");
-				//rgb(252, 73, 73)
-				fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(1),fillColor(Color() {return c;}),		// (rgb(242,70,70)));	//y u changed it?
+
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
+				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l); edit(l);				
-					return true;
-				}));
+					if (butnr == 1)
+						colorClones(clones2,originalTree,l);	
+					else if (butnr == 3)
+						edit(selectedFigLoc);
+					return true;}),
+					
+				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
+					if (key == keyEscape())
+						render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+					return true;}));
 			}
+			
+			
 			else {
 				numberOfClones = 0;
 				visit(tree) {
 					case fragment(__, _, l, clonesList): numberOfClones = size(clonesList);
 				}
 				
-				if(numberOfClones == 1) c = color("Green");
-				else if(numberOfClones < 5) c = color("Brown");
-				else if(numberOfClones < 15) c = color("Blue");
+				if(numberOfClones == 1) c = color("lightcyan");
+				else if(numberOfClones < 5) c = color("lightblue");
+				else if(numberOfClones < 15) c = color("royalblue");
 				else c = color("Black");
 							
 				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
+				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l);			
-					return true;
-				}));				
-			}		
+					if (butnr == 1)
+						colorClones(clones2,originalTree,l);	
+					else if (butnr == 3)
+						edit(selectedFigLoc);
+					return true;}),
+					
+				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
+					if (key == keyEscape())
+						render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+					return true;}));
+					
+			}
 			leavesToBoxes += (l:fig);	
 		}
 	}		
@@ -108,6 +132,23 @@ void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructu
 	leavesToBoxes = ();
 	render(visualize(tree, clones,selectedFigLoc));	
 }
+
+str getColorFromType(loc l,list[tuple[loc l1, int t]] clones) {
+	for (i <- clones) {
+		if (l == i.l1)
+			return  colorClonedBox(i.t);
+	}
+}
+
+str colorClonedBox(int t) {
+	if (t == 1)
+		return "lightpink";
+	else if (t == 2)
+		return "hotpink";
+	else 
+		return "red";
+}
+
 
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootName) {
 	// create root node
