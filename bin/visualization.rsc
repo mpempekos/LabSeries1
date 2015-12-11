@@ -54,8 +54,15 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones) {
 		}					
 		case fragment(bl, el, l, clones2): {			
 			//println("Fragment <l> has these clones: <clones2>");			
-			if (l in clones.l1) 
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(rgb(242,70,70)));		
+			if (l in clones.l1)  {
+				// fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("red"));			// (rgb(242,70,70)));	//y u changed it?	
+				c = false;							
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("red"); }),
+				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
+					colorClones(clones2,originalTree); c = false;				
+					return true;
+				}));
+			}
 			else {			
 				c = false;							
 				//		fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color () { return c ? color("yellow") : color("white"); }),
@@ -119,6 +126,14 @@ tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(Projec
 				tree.subFolders = tree.subFolders + updatedNode;
 				flag2 = true;
 			}		
+			
+			//****** dont't delete below comments pliz... i want to ask Vadim....
+			
+			// fuckin pattern matching!
+			//case fragment(bl, el, x, cl) : println("Why is this printed but changin leaf below is not workin???");
+			//case fragment(int bl,int el,loc x,list[tuple[loc cloneLocation, int typee]] cl) => fragment(bl, el, x, cl+<y,z>)		
+			//println("?????????after??????????");
+			//println(tree.internalTrees);
 		}	
 		if (!flag2) {	// new leaf to be inserted....												
 			ProjectStructure fragment = createFragment(pair);				
