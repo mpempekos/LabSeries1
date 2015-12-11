@@ -10,6 +10,7 @@ import vis:: Render;
 import lab2;
 import ListRelation;
 import vis::KeySym;
+import util::Editors;
 
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
@@ -21,8 +22,8 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	clones = findClones(|project://softEvolTest|, 30); // why 30??
-	//clones = findClones(|project://smallsql0.21_src|, 30);
+	//clones = findClones(|project://softEvolTest|, 30); // why 30??
+	clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
@@ -62,7 +63,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			if (l == selectedFigLoc)  {
 				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("yellow"),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l);				
+					colorClones(clones2,originalTree,l);			
 					return true;
 				}));
 			}
@@ -76,7 +77,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				//rgb(252, 73, 73)
 				fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(1),fillColor(Color() {return c;}),		// (rgb(242,70,70)));	//y u changed it?
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l);				
+					colorClones(clones2,originalTree,l); edit(l);				
 					return true;
 				}));
 			}
@@ -93,7 +94,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 							
 				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					colorClones(clones2,originalTree,l);				
+					colorClones(clones2,originalTree,l);			
 					return true;
 				}));				
 			}		
