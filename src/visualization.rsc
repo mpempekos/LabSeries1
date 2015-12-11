@@ -143,24 +143,41 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 ProjectStructure insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair) {	
 	if(isEmpty(pathForInsertion)) {		// time to add a leaf			
 		bool flag2 = false;
-		for(i <- tree.internalTrees) {			
-			if (pair.l1 == i.l) {			
-			
-			println("**********************");
-			println("Before add: <i.clones>");	
-				
-				
-				i.clones += [<pair.l2,pair.t>];
-				
-				//below is added indeed...  check line 170...
-				
-			println("After add: <i.clones>");	
-			println("**********************");
-			
-				flag2 = true;
-				break;
-			}
-		}		
+		
+		//for(i <- tree.internalTrees) {			
+		//	if (pair.l1 == i.l) {			
+		//	
+		//	println("**********************");
+		//	println("Before add: <i.clones>");	
+		//		
+		//		
+		//		i.clones += [<pair.l2,pair.t>];
+		//		
+		//		//below is added indeed...  check line 170...
+		//		
+		//	println("After add: <i.clones>");	
+		//	println("**********************");
+		//	
+		//		flag2 = true;
+		//		break;
+		//	}
+		//}		
+		
+		//
+		
+		x = pair.l1;
+		y = pair.l2;
+		z = pair.t;
+		
+	visit(tree.internalTrees) {		
+			case fragment(bl, el, x, clones) => fragment(bl, el, x, clones + [<y,z>])		
+		}
+	//	
+	//	println("");
+	//	//case fragment(bl, el, pair.l1, clones) => fragment(bl, el, pair.l1, clones);
+	//	
+	//
+	//	}
 		
 	
 		
