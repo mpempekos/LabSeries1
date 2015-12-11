@@ -22,8 +22,8 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	//clones = findClones(|project://softEvolTest|, 30); // why 30??
-	clones = findClones(|project://smallsql0.21_src|, 30);
+	clones = findClones(|project://softEvolTest|, 30); // why 30??
+	//clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
@@ -68,7 +68,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					if (butnr == 1)
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
-						edit(selectedFigLoc);
+						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
@@ -86,7 +86,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					if (butnr == 1)
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
-						edit(selectedFigLoc);
+						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
@@ -113,7 +113,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					if (butnr == 1)
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
-						edit(selectedFigLoc);
+						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {

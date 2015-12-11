@@ -22,8 +22,8 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	//clones = findClones(|project://softEvolTest|, 30); // why 30??
-	clones = findClones(|project://smallsql0.21_src|, 30);
+	clones = findClones(|project://softEvolTest|, 30); // why 30??
+	//clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
