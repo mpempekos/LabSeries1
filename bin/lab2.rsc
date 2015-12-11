@@ -41,7 +41,7 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	//project = |project://smallsql0.21_src|;
 	//project = |project://softEvolTest|;
 	set[Declaration] projectAST = createAstsFromEclipseProject(project, true);	
-	map[int, list[node]] buckets = ();	
+	map[node, list[node]] buckets = ();	
 	
 	// visit AST and put node in is corresponding bucket using is hashvalue	
 	visit(projectAST) {		
@@ -49,14 +49,14 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 			if(Declaration _ := t || Statement _ := t) { // explain why???
 				mass = treeMass(t);
 				if(mass >= minNumbNodes) {				
-					//node f = normalizeAST(t);
+					node f = normalizeAST(t);
 					//iprintln(f);		
 					//int hashValue = massToHashvalue(mass);							
-					if(mass in buckets && buckets[mass] != []) {
-						buckets[mass] += t;
+					if(f in buckets && buckets[f] != []) {
+						buckets[f] += t;
 					}
 					else {
-						buckets[mass] = [t];
+						buckets[f] = [t];
 					}								
 				}
 			}						
@@ -172,7 +172,7 @@ list[tuple[node,node,int]] defineTypeOfClones(list[node] nodes) {
 				similarity = compareTrees(nodes[i], nodes[j]);
 				//allSim += similarity;	
 				//pairs += 1;
-				println("similarity : <similarity>");							
+				//println("similarity : <similarity>");							
 				if (similarity == 1.0) {														
 				    clones += <nodes[i],nodes[j],1>;		
 				    //continue;		    				   

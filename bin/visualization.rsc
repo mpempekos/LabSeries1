@@ -43,7 +43,7 @@ ProjectStructure getLastSingleNode(ProjectStructure tree) {
 }
 
 
-Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones,loc selectedFigLoc) {	
+Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc selectedFigLoc) {	
 	switch (tree) {
 		case folderOrFile(name, N, internalNodes): { 
 			Figures figs = [];			
@@ -56,7 +56,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones,loc sel
 		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
 		  	}					  			 		  		  
 		}					
-		case fragment(bl, el, l, clones2): {			
+		case fragment(bl, el, l, clones2): {
+			c = color("White");			
 			//println("Fragment <l> has these clones: <clones2>");			
 			if (l == selectedFigLoc)  {
 				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("yellow"),
@@ -67,14 +68,20 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones,loc sel
 			}
 			
 			else if (l in clones.l1)  {
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(rgb(252, 73, 73)),		// (rgb(242,70,70)));	//y u changed it?
+				int typee = 0;
+				for(clone <- clones) if(l == clone.l1) typee = clone.t;				
+				if(typee == 1) c = color("Pink");
+				else if(typee == 2) c = color("Orange");
+				else c = color("Red");
+				//rgb(252, 73, 73)
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(Color() {return c;}),		// (rgb(242,70,70)));	//y u changed it?
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					colorClones(clones2,originalTree,l);				
 					return true;
 				}));
 			}
 			else {			
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("white"),
+				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(rgb(183, 183, 183)),
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					colorClones(clones2,originalTree,l); c = false;				
 					return true;
@@ -103,14 +110,12 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 	int pos = findFirst(pair.l1.uri, rootNode);
 	str aux = pair.l1.uri[pos+size(rootNode)+1..];	
 	list[str] pathForInsertion = split("/",aux);
-	pairTreeFragmentAdded = insertPathOfNodesAndLeaf(tree, pathForInsertion, pair, false);
-	//println("FIRST ELEM OF PAIR CLONE ADDED: <tree>");
+	pairTreeFragmentAdded = insertPathOfNodesAndLeaf(tree, pathForInsertion, pair, false);	
 	
 	tuple[loc l1, loc l2, int t] reversedPair = <pair.l2, pair.l1, pair.t>;			
 	str aux1 = pair.l2.uri[pos+size(rootNode)+1..];		
 	list[str] pathForInsertion1 = split("/",aux1);
-	pairTreeFragmentAdded = insertPathOfNodesAndLeaf(pairTreeFragmentAdded.tree, pathForInsertion1, reversedPair, false);	
-	//println("SECOND ELEM OF PAIR CLONE ADDED: <tree>");	
+	pairTreeFragmentAdded = insertPathOfNodesAndLeaf(pairTreeFragmentAdded.tree, pathForInsertion1, reversedPair, false);		
 				
 	return pairTreeFragmentAdded.tree;
 }
@@ -146,7 +151,7 @@ tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(Projec
 		}
 		return <tree, false>;			
 	}
-	else { 		//time for a node			
+	else { 	//time for a node			
 		bool flag = false;
 		visit(tree) {		
 			// below needs to break....maybe nested staff...				
@@ -159,8 +164,7 @@ tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(Projec
 			}
 			return insertInSubTrees(originalTree, insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair, false));		
 		}		
-		else { // Node doesn't exit yet. create it			
-			//tree.numberOfFragments = tree.numberOfFragments + 1;									
+		else { // Node doesn't exit yet. create it													
 			newNode = folderOrFile(pathForInsertion[0], 1, []);	
 			return insertInSubTrees(tree, insertPathOfNodesAndLeaf(newNode, tail(pathForInsertion), pair, false));
 		}		
@@ -183,14 +187,12 @@ tuple[ProjectStructure,bool] insertInSubTrees(ProjectStructure tree, tuple[Proje
 				tree.subFolders = tree.subFolders - folderOrFile(x, y, z);
 				updatedNode = folderOrFile(x, y, subTree.subFolders);
 			}
-		}
-		println(fragmentAdded);		
+		}		
 		if(fragmentAdded) {			
 			updatedNode.numberOfFragments = updatedNode.numberOfFragments + 1;
 		}				
 		tree.subFolders = tree.subFolders + updatedNode;
-	}
-	//tree.numberOfFragments = tree.numberOfFragments + 1;
+	}	
 	return <tree, fragmentAdded>;
 }
 
