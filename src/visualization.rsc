@@ -12,6 +12,19 @@ import ListRelation;
 import vis::KeySym;
 import util::Editors;
 
+
+/******************************************** Documentation for Visualization *************************************************
+
+The visualization includes all the clones that were found at the project, and starts from the last single folder of the project.
+In the first figure, there is an overview of the project, and user can see how many clone paairs exist for a specific color.
+The color of the clones is decided as follows: --------------------------------------------------------------------------------
+When the user left-clicks on one clone, the specific clone becomes yellow, and all of its pairs get one of the following colors,
+depending on the type of the clone: -------------------------------------------------------------------------------------------
+By right-clicking on one clone, the user is redirected to the file of the related clone.
+User can always go back to the initial overview by pressing 'esc', when he is inside the figure of the visualization
+
+********************************************************************************************************************************/
+
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
 public ProjectStructure originalTree;
