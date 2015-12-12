@@ -12,19 +12,6 @@ import ListRelation;
 import vis::KeySym;
 import util::Editors;
 
-
-/******************************************** Documentation for Visualization *************************************************
-
-The visualization includes all the clones that were found at the project, and starts from the last single folder of the project.
-In the first figure, there is an overview of the project, and user can see how many clone paairs exist for a specific color.
-The color of the clones is decided as follows: --------------------------------------------------------------------------------
-When the user left-clicks on one clone, the specific clone becomes yellow, and all of its pairs get one of the following colors,
-depending on the type of the clone: -------------------------------------------------------------------------------------------
-By right-clicking on one clone, the user is redirected to the file of the related clone.
-User can always go back to the initial overview by pressing 'esc', when he is inside the figure of the visualization
-
-********************************************************************************************************************************/
-
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
 public ProjectStructure originalTree;
@@ -75,7 +62,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			c = color("White");			
 			//println("Fragment <l> has these clones: <clones2>");			
 			if (l == selectedFigLoc)  {
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("yellow"),
+				fig = box(text("<bl>,<el>"),id("<l>"),area(int() {return ((el - bl)/2);}),fillColor("yellow"),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -92,8 +79,9 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			
 			
 			else if (l in clones.l1)  {
-
-				fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
+				int typee = 0;
+				for(clone <- clones) if(l == clone.l1) typee = clone.t;	
+				fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(int() {return ((el - bl)/2);}),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -112,7 +100,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			else {
 				numberOfClones = 0;
 				visit(tree) {
-					case fragment(__, _, l, clonesList): numberOfClones = size(clonesList);
+					case fragment(bl, el, l, clonesList): numberOfClones = size(clonesList);
 				}
 				
 				if(numberOfClones == 1) c = color("lightcyan");
@@ -120,7 +108,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				else if(numberOfClones < 15) c = color("royalblue");
 				else c = color("Black");
 							
-				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
+				fig = box(text("<numberOfClones>"), id("<l>"),area(int() {return ((el - bl)/2);}),fillColor(Color() {return c;}),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
