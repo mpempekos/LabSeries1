@@ -12,13 +12,14 @@ import ListRelation;
 import vis::KeySym;
 import util::Editors;
 
+
 /******************************************** Documentation for Visualization *************************************************
 -
 -The visualization includes all the clones that were found at the project, and starts from the last single folder of the project.
--In the first figure, there is an overview of the project, and user can see how many clone paairs exist for a specific color.
+-In the first figure, there is an overview of the project, and user can see how many clone pairs exist for a specific clone.
 -The color of the clones is decided as follows: --------------------------------------------------------------------------------
 -When the user left-clicks on one clone, the specific clone becomes yellow, and all of its pairs get one of the following colors,
--depending on the type of the clone: -------------------------------------------------------------------------------------------
+-depending on the type of the clone: lightpink(type1), hotpink(type2), red(type3)
 -By right-clicking on one clone, the user is redirected to the file of the related clone.
 -User can always go back to the initial overview by pressing 'esc', when he is inside the figure of the visualization
 -
@@ -29,36 +30,25 @@ public Figure fig;
 public ProjectStructure originalTree;
 public Figure infoBox = box(text(""),vshrink(0.1),top());
 
-data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLocation, int typee]] clones)	// insert id again!
+data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLocation, int typee]] clones)
 | folderOrFile(str name, int numberOfFragments, list[ProjectStructure] subFolders);
-
-
-void tessting() {
-	fig = treemap([box(fillColor("green"))],fillColor("green"));
-	visit(fig) {
-		case _treemap(xs,ys) => _treemap(xs,ys+)
-	}
-	
-	println(fig);
-}
 
 
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	clones = findClones(|project://softEvolTest|, 30); // why 30??
-	//clones = findClones(|project://smallsql0.21_src|, 30);
+	//clones = findClones(|project://softEvolTest|, 30); // why 30??
+	clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
 	originalTree = tree;
 	//println("final tree: <tree>");		
-	x = visualize(tree,[],|project://example-project/src/fuuck.java|);
-	//println(x);
+	x = visualize(tree,[],|project://nonexisting-project/src/nonexisting.java|);
 	y = vcat([infoBox,x]);
 	render(y);
 		
-	//render(visualize(tree,[],|project://example-project/src/fuuck.java|));
+	//render(visualize(tree,[],|project://example-project/src/nonexisting.java|));
 }
 
 ProjectStructure getLastSingleNode(ProjectStructure tree) {
@@ -74,34 +64,26 @@ ProjectStructure getLastSingleNode(ProjectStructure tree) {
 
 Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc selectedFigLoc) {	
 	switch (tree) {
+	
 		case folderOrFile(name, N, internalNodes): { 
 			Figures figs = [];			
 			for (i <- internalNodes){
 			  	figs += visualize(i,clones,selectedFigLoc);
 		  	}
 		 
-		 
-		  	if(contains(name, ".java"))	{		
-		 		 
-		  		//fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));
-		  		fig = treemap(figs,area(N), fillColor(rgb(179, 173, 247)),lineColor("red"));
-		  		//fig = treemap([vcat([text(name),treemap(figs)])],area(N), fillColor(rgb(179, 173, 247)),lineColor("red"));
-		  	} 
-		  	
-		  	else {
-		  	
-		  		//fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
-		  		fig = treemap(figs,area(N), fillColor(rgb(94, 237, 111)));
-		  	}					  			 		  		  
-		}					
+		 	fig = treemap(figs,area(N), fillColor(rgb(94, 237, 111)));
+		 	
+		  	//fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));
+		  					  			 		  		  
+		}			
+				
 		case fragment(bl, el, l, clones2): {	
 		
 			c = color("White");			
-			//println("Fragment <l> has these clones: <clones2>");			
+			//println("Fragment <l> has these clones: <clones2>");	
+					
 			if (l == selectedFigLoc)  {
 				//fig = box(text("<bl>,<el>"),id("<l>"),area(int() {return ((el - bl)/2);}),fillColor("yellow"),
-				println("<bl> ,<el>");
-				//fig = box(text("<bl>,<el>"),id("<l>"),area(1),fillColor("yellow"),
 				fig = box(id("<l>"),area(1),fillColor("yellow"),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
@@ -109,20 +91,15 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
 						edit(l);
-						//showInfoAtBox(originalTree,clones2,selectedFigLoc,l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
 					if (key == keyEscape()) {
-						//render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
-						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
+						x = visualize(originalTree,[],|project://nonexisting-project/src/nonexisting.java|);
 						y = vcat([infoBox,x]);
 						render(y);
-						}
-					return true;}));//,
-					
-					//onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); }));
-					
+					}
+					return true;}));	//onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); }));
 			}
 			
 			
@@ -130,27 +107,22 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				int typee = 0;
 				for(clone <- clones) if(l == clone.l1) typee = clone.t;	
 				//fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(int() {return ((el - bl)/2);}),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
-				//fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(1),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
 				fig = box(id("<l>"),area(1),fillColor(getColorFromType(l,clones)),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					if (butnr == 1) {
-						println("why");
-						colorClones(clones2,originalTree,l);	
-						}
+					if (butnr == 1)
+						colorClones(clones2,originalTree,l);
 					else if (butnr == 3)
 						edit(l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
-					if (key == keyEscape())
-						//render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
-						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
+					if (key == keyEscape()) {
+						x = visualize(originalTree,[],|project://nonexisting-project/src/nonexisting.java|);
 						y = vcat([infoBox,x]);
 						render(y);
-					return true;}));//,
-					
-				//onMouseEnter(void() { showInfoAtBox(originalTree,clones2+<l,typee>,selectedFigLoc,l); }));
+					}
+					return true;}));//onMouseEnter(void() { showInfoAtBox(originalTree,clones2+<l,typee>,selectedFigLoc,l); }));
 					
 			}
 			
@@ -177,19 +149,15 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
-					if (key == keyEscape())
-						//render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
-						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
+					if (key == keyEscape()) {
+						x = visualize(originalTree,[],|project://nonexisting-project/src/nonexisting.java|);
 						y = vcat([infoBox,x]);
 						render(y);
-					return true;}));//,
-					
-					//onMouseEnter(void() { showInfoAtBox(originalTree,[],selectedFigLoc,l); }));
-					
-					//onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); }));
-					
+					}
+					return true;}));
 					
 			}
+			
 			leavesToBoxes += (l:fig);	
 		}
 	}		
