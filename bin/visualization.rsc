@@ -109,6 +109,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 						colorClones(clones2,originalTree,l);	
 					else if (butnr == 3)
 						edit(l);
+						//showInfoAtBox(originalTree,clones2,selectedFigLoc,l);
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
@@ -120,8 +121,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 						}
 					return true;}),
 					
-					onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); })
-						);
+					onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); }));
 					
 			}
 			
@@ -134,8 +134,10 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				fig = box(id("<l>"),area(1),fillColor(getColorFromType(l,clones)),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-					if (butnr == 1)
+					if (butnr == 1) {
+						println("why");
 						colorClones(clones2,originalTree,l);	
+						}
 					else if (butnr == 3)
 						edit(l);
 					return true;}),
@@ -146,7 +148,10 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
 						y = vcat([infoBox,x]);
 						render(y);
-					return true;}));
+					return true;}),
+					
+				onMouseEnter(void() { showInfoAtBox(originalTree,clones2+<l,typee>,selectedFigLoc,l); }));
+					
 			}
 			
 			
@@ -177,7 +182,12 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
 						y = vcat([infoBox,x]);
 						render(y);
-					return true;}));
+					return true;}),
+					
+					onMouseEnter(void() { showInfoAtBox(originalTree,[],selectedFigLoc,l); }));
+					
+					//onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); }));
+					
 					
 			}
 			leavesToBoxes += (l:fig);	
