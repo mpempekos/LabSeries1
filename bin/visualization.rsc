@@ -40,8 +40,12 @@ void runVisualization() {
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
 	originalTree = tree;
-	//println("final tree: <tree>");			
-	render(visualize(tree,[],|project://example-project/src/fuuck.java|));
+	//println("final tree: <tree>");		
+	x = visualize(tree,[],|project://example-project/src/fuuck.java|);
+	println(x);
+	render(x);
+		
+	//render(visualize(tree,[],|project://example-project/src/fuuck.java|));
 }
 
 ProjectStructure getLastSingleNode(ProjectStructure tree) {
@@ -90,7 +94,7 @@ void testing() {
 	box(area(1),fillColor("red")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
 	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
 	box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow"))],area(2)),
-	treemap([box(area(2),fillColor("black"))],area(2))]));
+	treemap([box(area(2),fillColor("black"))],area(2)),treemap([box(area(1),fillColor("white")),treemap([box(area(1),fillColor("red")),box(area(1),fillColor("green"))],area(2))],area(2))]));
 }
 
 
@@ -105,14 +109,14 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 		 
 		  	if(contains(name, ".java"))	{		
 		 		 
-		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));
+		  		//fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));
+		  		fig = treemap(figs,area(N), fillColor(rgb(179, 173, 247)));
 		  	} 
 		  	
 		  	else {
 		  	
-		  	//figs += visualize(internalNodes[0],clones,selectedFigLoc);
-		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
-		  		//fig = treemap(figs,area(N), fillColor(rgb(94, 237, 111)));
+		  		//fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
+		  		fig = treemap(figs,area(N), fillColor(rgb(94, 237, 111)));
 		  	}					  			 		  		  
 		}					
 		case fragment(bl, el, l, clones2): {	
