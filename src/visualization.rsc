@@ -60,45 +60,6 @@ ProjectStructure getLastSingleNode(ProjectStructure tree) {
 	return tree;
 }
 
-void testing() {
-	render(treemap([treemap([box(area(1),fillColor("green")),box(area(3),fillColor("red")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("red")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("red")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
-	box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow"))],area(2)),
-	treemap([box(area(2),fillColor("black"))],area(2)),treemap([box(area(1),fillColor("white")),treemap([box(area(1),fillColor("red")),box(area(1),fillColor("green"))],area(2))],area(2))]));
-}
-
-
 Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc selectedFigLoc) {	
 	switch (tree) {
 		case folderOrFile(name, N, internalNodes): { 
@@ -111,7 +72,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 		  	if(contains(name, ".java"))	{		
 		 		 
 		  		//fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));
-		  		fig = treemap(figs,area(N), fillColor(rgb(179, 173, 247)));
+		  		fig = treemap(figs,area(N), fillColor(rgb(179, 173, 247)),lineColor("red"));
 		  	} 
 		  	
 		  	else {
