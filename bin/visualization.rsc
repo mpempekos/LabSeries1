@@ -27,24 +27,36 @@ import util::Editors;
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
 public ProjectStructure originalTree;
+public Figure infoBox = box(text(""),vshrink(0.1),top());
 
 data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLocation, int typee]] clones)	// insert id again!
 | folderOrFile(str name, int numberOfFragments, list[ProjectStructure] subFolders);
 
 
+void tessting() {
+	fig = treemap([box(fillColor("green"))],fillColor("green"));
+	visit(fig) {
+		case _treemap(xs,ys) => _treemap(xs,ys+)
+	}
+	
+	println(fig);
+}
+
+
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	//clones = findClones(|project://softEvolTest|, 30); // why 30??
-	clones = findClones(|project://smallsql0.21_src|, 30);
+	clones = findClones(|project://softEvolTest|, 30); // why 30??
+	//clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
 	originalTree = tree;
 	//println("final tree: <tree>");		
 	x = visualize(tree,[],|project://example-project/src/fuuck.java|);
-	println(x);
-	render(x);
+	//println(x);
+	y = vcat([infoBox,x]);
+	render(y);
 		
 	//render(visualize(tree,[],|project://example-project/src/fuuck.java|));
 }
@@ -100,9 +112,17 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					return true;}),
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
-					if (key == keyEscape())
-						render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
-					return true;}));
+					if (key == keyEscape()) {
+						//render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
+						y = vcat([infoBox,x]);
+						render(y);
+						}
+					return true;}),
+					
+					onMouseEnter(void() { showInfoAtBox(originalTree,clones2,selectedFigLoc,l); })
+						);
+					
 			}
 			
 			
@@ -122,7 +142,10 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
 					if (key == keyEscape())
-						render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+						//render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
+						y = vcat([infoBox,x]);
+						render(y);
 					return true;}));
 			}
 			
@@ -150,7 +173,10 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
 					if (key == keyEscape())
-						render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+						//render(visualize(originalTree,[],|project://example-project/src/fuuck.java|));
+						x = visualize(originalTree,[],|project://example-project/src/fuuck.java|);
+						y = vcat([infoBox,x]);
+						render(y);
 					return true;}));
 					
 			}
@@ -160,9 +186,22 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 	return fig;
 }
 
+void showInfoAtBox(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc selectedFigLoc,loc locToShow) {
+
+	infoBox = box(text("<locToShow>"),vshrink(0.1),top());	
+	
+	println(infoBox);
+	x = visualize(tree,clones,selectedFigLoc);
+	y = vcat([infoBox,x]);
+	render(y);
+}
+
 void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructure tree,loc selectedFigLoc) {	
 	leavesToBoxes = ();
-	render(visualize(tree, clones,selectedFigLoc));	
+	//render(visualize(tree, clones,selectedFigLoc));	
+	x = visualize(tree,clones,selectedFigLoc);
+	y = vcat([infoBox,x]);
+	render(y);
 }
 
 str getColorFromType(loc l,list[tuple[loc l1, int t]] clones) {
