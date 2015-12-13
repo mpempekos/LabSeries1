@@ -12,6 +12,18 @@ import ListRelation;
 import vis::KeySym;
 import util::Editors;
 
+/******************************************** Documentation for Visualization *************************************************
+-
+-The visualization includes all the clones that were found at the project, and starts from the last single folder of the project.
+-In the first figure, there is an overview of the project, and user can see how many clone paairs exist for a specific color.
+-The color of the clones is decided as follows: --------------------------------------------------------------------------------
+-When the user left-clicks on one clone, the specific clone becomes yellow, and all of its pairs get one of the following colors,
+-depending on the type of the clone: -------------------------------------------------------------------------------------------
+-By right-clicking on one clone, the user is redirected to the file of the related clone.
+-User can always go back to the initial overview by pressing 'esc', when he is inside the figure of the visualization
+-
+-********************************************************************************************************************************/
+
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
 public ProjectStructure originalTree;
@@ -22,8 +34,8 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	clones = findClones(|project://softEvolTest|, 30); // why 30??
-	//clones = findClones(|project://smallsql0.21_src|, 30);
+	//clones = findClones(|project://softEvolTest|, 30); // why 30??
+	clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
@@ -43,6 +55,44 @@ ProjectStructure getLastSingleNode(ProjectStructure tree) {
 	return tree;
 }
 
+void testing() {
+	render(treemap([treemap([box(area(1),fillColor("green")),box(area(3),fillColor("red")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("green")),box(area(1),fillColor("green")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("red")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("red")),box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),
+	box(area(1),fillColor("blue")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow")),box(area(1),fillColor("yellow"))],area(2)),
+	treemap([box(area(2),fillColor("black"))],area(2))]));
+}
+
 
 Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc selectedFigLoc) {	
 	switch (tree) {
@@ -51,10 +101,18 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			for (i <- internalNodes){
 			  	figs += visualize(i,clones,selectedFigLoc);
 		  	}
-		  	if(contains(name, ".java"))	{			  			 
-		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));	  
-		  	} else {
+		 
+		 
+		  	if(contains(name, ".java"))	{		
+		 		 
+		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(179, 173, 247)));
+		  	} 
+		  	
+		  	else {
+		  	
+		  	figs += visualize(internalNodes[0],clones,selectedFigLoc);
 		  		fig = box(vcat([text(name),treemap(figs)]),area(N), fillColor(rgb(94, 237, 111)));	 
+		  		//fig = treemap(figs,area(N), fillColor(rgb(94, 237, 111)));
 		  	}					  			 		  		  
 		}					
 		case fragment(bl, el, l, clones2): {	
