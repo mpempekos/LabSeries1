@@ -46,8 +46,8 @@ void tessting() {
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	//clones = findClones(|project://softEvolTest|, 30); // why 30??
-	clones = findClones(|project://smallsql0.21_src|, 30);
+	clones = findClones(|project://softEvolTest|, 30); // why 30??
+	//clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
@@ -209,7 +209,7 @@ void showInfoAtBox(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc 
 void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructure tree,loc selectedFigLoc) {	
 	leavesToBoxes = ();
 	
-	infoBox = box(text("<selectedFigLoc>"),vshrink(0.1),top());	
+	infoBox = box(text("Selected lines: <selectedFigLoc.begin.line>-<selectedFigLoc.end.line> @ <selectedFigLoc.uri>"),vshrink(0.1),top());	
 	//render(visualize(tree, clones,selectedFigLoc));	
 	x = visualize(tree,clones,selectedFigLoc);
 	y = vcat([infoBox,x]);
