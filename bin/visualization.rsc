@@ -167,8 +167,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 void showInfoAtBox(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc selectedFigLoc,loc locToShow) {
 
 	infoBox = box(text("<locToShow>"),vshrink(0.1),top());	
-	
-	println(infoBox);
+	//println(infoBox);
 	x = visualize(tree,clones,selectedFigLoc);
 	y = vcat([infoBox,x]);
 	render(y);
@@ -176,7 +175,6 @@ void showInfoAtBox(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc 
 
 void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructure tree,loc selectedFigLoc) {	
 	leavesToBoxes = ();
-	
 	infoBox = box(text("Selected lines: <selectedFigLoc.begin.line>-<selectedFigLoc.end.line> @ <selectedFigLoc.uri>"),vshrink(0.1),top());	
 	//render(visualize(tree, clones,selectedFigLoc));	
 	x = visualize(tree,clones,selectedFigLoc);
@@ -201,15 +199,18 @@ str colorClonedBox(int t) {
 }
 
 
+/***************************************************** Tree methods ****************************************************************/
+
+
 ProjectStructure createTree(list[tuple[loc l1, loc l2, int t]] clonePairs, str rootName) {
 	// create root node
 	ProjectStructure root = folderOrFile(rootName, 0, []);		
 	// insert pairs of clones in the myTree
-	for(pair <- clonePairs) root = insert2Leafs(root, pair, rootName);				
+	for(pair <- clonePairs) root = insert2Leaves(root, pair, rootName);				
 	return root;
 }
 
-ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t] pair, str rootNode) {	
+ProjectStructure insert2Leaves(ProjectStructure tree, tuple[loc l1, loc l2, int t] pair, str rootNode) {	
 	int pos = findFirst(pair.l1.uri, rootNode);
 	str aux = pair.l1.uri[pos+size(rootNode)+1..];	
 	list[str] pathForInsertion = split("/",aux);
@@ -225,8 +226,9 @@ ProjectStructure insert2Leafs(ProjectStructure tree, tuple[loc l1, loc l2, int t
 
 
 tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair, bool fragmentAdded) {	
-	if(isEmpty(pathForInsertion)) {		// time to add a leaf			
-		bool flag2 = false;	
+	
+	if(isEmpty(pathForInsertion)) {		// time for a leaf			
+		bool isLeafFound = false;	
 		tempTree = tree.subFolders;		
 		x = pair.l1;
 		y = pair.l2;
@@ -236,7 +238,7 @@ tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(Projec
 				tree.subFolders = tree.subFolders - fragment(bl, el, x, cl);
 				updatedNode = fragment(bl, el, x, cl + <y,z>);
 				tree.subFolders = tree.subFolders + updatedNode;
-				flag2 = true;
+				isLeafFound = true;
 			}		
 			
 			//****** dont't delete below comments pliz... i want to ask Vadim....
@@ -247,43 +249,50 @@ tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(Projec
 			//println("?????????after??????????");
 			//println(tree.internalTrees);
 		}	
-		if (!flag2) {	// new leaf to be inserted....												
+		if (!isLeafFound) {	// new leaf to be inserted....												
 			ProjectStructure fragment = createFragment(pair);				
 			tree.subFolders = tree.subFolders + fragment;
 			return <tree, true>;			
 		}
+		
 		return <tree, false>;			
 	}
-	else { 	//time for a node			
-		bool flag = false;
+	
+	else { 					//time for a node			
+		bool isFolderOrFileFOund = false;
 		visit(tree) {		
-			// below needs to break....maybe nested staff...				
-			case folderOrFile(name, _, _): if (name == pathForInsertion[0] ) flag = true;		
+			case folderOrFile(name, _, _): if (name == pathForInsertion[0] ) isFolderOrFileFOund = true;		
 		}				
-		if (flag) {	 // Node already exists.					
+		
+		if (isFolderOrFileFOund) {	 // Node already exists.					
 			ProjectStructure originalTree = tree;			
 			visit (tree) {
 				case folderOrFile(x, y, z) :  if (x == pathForInsertion[0]) tree = folderOrFile(pathForInsertion[0], y, z);				
 			}
 			return insertInSubTrees(originalTree, insertPathOfNodesAndLeaf(tree, tail(pathForInsertion), pair, false));		
 		}		
-		else { // Node doesn't exit yet. create it													
+		else { // Node doesn't exit - create it													
 			newNode = folderOrFile(pathForInsertion[0], 1, []);	
 			return insertInSubTrees(tree, insertPathOfNodesAndLeaf(newNode, tail(pathForInsertion), pair, false));
 		}		
 	}
 }
 
+
 tuple[ProjectStructure,bool] insertInSubTrees(ProjectStructure tree, tuple[ProjectStructure subTree, bool fragmentAdded] pairSubTreeFragmentAdded) {
 	subTree = pairSubTreeFragmentAdded.subTree;	
 	fragmentAdded = pairSubTreeFragmentAdded.fragmentAdded;
 	bool flag = false;
-	visit(tree.subFolders) {	// check if folder already exists and put flag to true in that case
+	
+	visit(tree.subFolders) {	// check if folder already exists
 		case folderOrFile(x, y, z) : if(x == subTree.name) flag = true; 
 	}
+	
 	if (!flag) { // if folder does not exist, add to the subFolders of the current folder				
 		tree.subFolders = tree.subFolders + subTree;
-	} else { // if folder exists, update it be adding a new folder
+	} 
+	
+	else { // if folder exists, update it be adding a new folder
 		ProjectStructure updatedNode = folderOrFile("error", 0, []); 
 		visit(tree.subFolders) {
 			case folderOrFile(x, y, z) : if(x == subTree.name) {
@@ -291,6 +300,7 @@ tuple[ProjectStructure,bool] insertInSubTrees(ProjectStructure tree, tuple[Proje
 				updatedNode = folderOrFile(x, y, subTree.subFolders);
 			}
 		}		
+		
 		if(fragmentAdded) {			
 			updatedNode.numberOfFragments = updatedNode.numberOfFragments + 1;
 		}				
