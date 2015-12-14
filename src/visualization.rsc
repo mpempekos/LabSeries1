@@ -37,8 +37,8 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 
-	//clones = findClones(|project://softEvolTest|, 30); // why 30??
-	clones = findClones(|project://smallsql0.21_src|, 30);
+	clones = findClones(|project://softEvolTest|, 30); // why 30??
+	//clones = findClones(|project://smallsql0.21_src|, 30);
 	//clones = findClones(|project://hsqldb-2.3.1|, 30);
 	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
@@ -83,8 +83,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			//println("Fragment <l> has these clones: <clones2>");	
 					
 			if (l == selectedFigLoc)  {
-				//fig = box(text("<bl>,<el>"),id("<l>"),area(int() {return ((el - bl)/2);}),fillColor("yellow"),
-				fig = box(id("<l>"),area(1),fillColor("yellow"),
+				fig = box(id("<l>"),area(int() {return ((el - bl)+1);}),fillColor("yellow"),
+				//fig = box(id("<l>"),area(1),fillColor("yellow"),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -106,8 +106,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			else if (l in clones.l1)  {
 				int typee = 0;
 				for(clone <- clones) if(l == clone.l1) typee = clone.t;	
-				//fig = box(text("<bl>,<el>\nType-<typee>"),id("<l>"),area(int() {return ((el - bl)/2);}),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
-				fig = box(id("<l>"),area(1),fillColor(getColorFromType(l,clones)),
+				fig = box(id("<l>"),area(int() {return ((el - bl)+1);}),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
+				//fig = box(id("<l>"),area(1),fillColor(getColorFromType(l,clones)),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -138,8 +138,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				else if(numberOfClones < 15) c = color("royalblue");
 				else c = color("Black");
 							
-				//fig = box(text("<numberOfClones>"), id("<l>"),area(int() {return ((el - bl)/2);}),fillColor(Color() {return c;}),
-				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
+				fig = box(text("<numberOfClones>"), id("<l>"),area(int() {return ((el - bl)+1);}),fillColor(Color() {return c;}),
+				//fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -311,4 +311,15 @@ tuple[ProjectStructure,bool] insertInSubTrees(ProjectStructure tree, tuple[Proje
 
 ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {	
 	return fragment(pair.l1.begin.line, pair.l1.end.line, pair.l1, [<pair.l2, pair.t>]);
+}
+
+
+void teest() {
+	fig = box(fillColor("green"));
+	y = "red";
+
+	fig=visit(fig) {
+		case _box([fillColor(x)])	=>	_box([fillColor("red")])	//: println("skata");
+	}
+	println(fig);
 }
