@@ -312,14 +312,3 @@ tuple[ProjectStructure,bool] insertInSubTrees(ProjectStructure tree, tuple[Proje
 ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {	
 	return fragment(pair.l1.begin.line, pair.l1.end.line, pair.l1, [<pair.l2, pair.t>]);
 }
-
-
-void teest() {
-	fig = box(fillColor("green"));
-	y = "red";
-
-	fig=visit(fig) {
-		case _box([fillColor(x)])	=>	_box([fillColor("red")])	//: println("skata");
-	}
-	println(fig);
-}
