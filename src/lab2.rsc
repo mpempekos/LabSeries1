@@ -49,7 +49,7 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 			if(Declaration _ := t || Statement _ := t) { // explain why???
 				mass = treeMass(t);
 				if(mass >= minNumbNodes) {				
-					node f = normalizeAST(t);
+					//node f = normalizeAST(t);
 					//iprintln(f);		
 					//int hashValue = massToHashvalue(mass);							
 					if(mass in buckets && buckets[mass] != []) {
