@@ -142,14 +142,18 @@ int numberOfLinesFromNode(node n) {
 	loc l1 = |project://LabSeries1/src/lab2.rsc|; //just something
 	if(Statement myStm := n) {													
 		if (myStm@src?) l1 = myStm@src;			
-		if(l1?) {nodeLines = readFileLines(l1);
-		numberOfLines = size(nodeLines);}
+		if(l1?) {
+			nodeLines = readFileLines(l1);
+			numberOfLines = size(nodeLines);
+		}
 		return numberOfLines;										
 	}	
 	else if(Declaration myDecl := n) {											
 		if (myDecl@src?) l1 = myDecl@src;		
-		if(l1?) {nodeLines = readFileLines(l1);
-		numberOfLines = size(nodeLines);}
+		if(l1?) {
+			nodeLines = readFileLines(l1);
+			numberOfLines = size(nodeLines);
+		}
 		return numberOfLines;										
 	} else return numberOfLines;	
 }
