@@ -35,7 +35,7 @@ import visualization;
 //		else return 4;
 //}
 
-list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
+list[tuple[loc l1, loc l2, int t]] findClones(loc project) {
 	println("visiting AST...");
 	//project = |project://hsqldb-2.3.1|;
 	//project = |project://smallsql0.21_src|;
@@ -47,8 +47,10 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	visit(projectAST) {		
 		case node t: 
 			if(Declaration _ := t || Statement _ := t) { // explain why???
-				mass = treeMass(t);
-				if(mass >= minNumbNodes) {				
+				//mass = treeMass(t);
+				n = numberOfLinesFromNode(t);		
+				if(n >= 6) {	
+					mass = treeMass(t);			
 					//node f = normalizeAST(t);
 					//iprintln(f);		
 					//int hashValue = massToHashvalue(mass);							
@@ -63,7 +65,7 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	}	
 	
 	println("defining type of clones...");
-	//for(a <- domain(buckets)) println("<a>:<size(buckets[a])>");	
+	//for(a <- domain(buckets)) if(size(buckets[a]) > 1) println("<a>:<size(buckets[a])>");	
 	
 	list[tuple[node n1,node n2, int t]] newClones = [];
 	//node domain(buckets)
@@ -84,42 +86,72 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project, int minNumbNodes) {
 	println("############################");	
 	for(pair <- clones) {			
 		if(Statement myDecl := pair.n1) {													
-			if (myDecl@src?) l1 = myDecl@src;
-			println("loc: <l1>");
-			println("...........................");
-			nodeLines = readFileLines(l1);
-			for(s <- nodeLines) println(s);								
+			if (myDecl@src?) {
+				l1 = myDecl@src;
+				println("loc: <l1>");
+				println("...........................");
+				nodeLines = readFileLines(l1);
+				for(s <- nodeLines) println(s);
+				println("#########Type-<pair.t>#############");	
+			}								
 		}	
 		if(Declaration myDecl := pair.n1) {											
-			if (myDecl@src?) l1 = myDecl@src;
-			println("loc: <l1>");
-			println("...........................");
-			nodeLines = readFileLines(l1);
-			for(s <- nodeLines) println(s);										
-		}
-		println("#########Type-<pair.t>#############");	
+			if (myDecl@src?) {
+				l1 = myDecl@src;
+				println("loc: <l1>");
+				println("...........................");
+				nodeLines = readFileLines(l1);
+				for(s <- nodeLines) println(s);	
+				println("#########Type-<pair.t>#############");	
+			}									
+		}		
 		if(Statement myDecl := pair.n2) {												
-			if (myDecl@src?) l2 = myDecl@src;
-			println("loc: <l2>");
-			println("...........................");
-			nodeLines = readFileLines(l2);
-			for(s <- nodeLines) println(s);								
+			if (myDecl@src?) {
+				l2 = myDecl@src;
+				println("loc: <l2>");
+				println("...........................");
+				nodeLines = readFileLines(l2);
+				for(s <- nodeLines) println(s);
+				clonePairs += <l1, l2, pair.t>;	
+				println("////////////////////////////");	
+				println("////////////////////////////");
+				println("////////////////////////////");
+			}								
 		}	
 		if(Declaration myDecl := pair.n2) {											
-			if (myDecl@src?) l2 = myDecl@src;
-			println("loc: <l2>");
-			println("...........................");
-			nodeLines = readFileLines(l2);
-			for(s <- nodeLines) println(s);										
-		}
-		println("////////////////////////////");	
-		println("////////////////////////////");
-		println("////////////////////////////");
-		clonePairs += <l1, l2, pair.t>;	
+			if (myDecl@src?) {
+				l2 = myDecl@src;
+				println("loc: <l2>");
+				println("...........................");
+				nodeLines = readFileLines(l2);
+				for(s <- nodeLines) println(s);	
+				clonePairs += <l1, l2, pair.t>;	
+				println("////////////////////////////");	
+				println("////////////////////////////");
+				println("////////////////////////////");
+			}									
+		}				
 	}
 	
-	println("<size(clones)> pairs of clones found");	
+	println("<size(clonePairs)> pairs of clones found");	
 	return clonePairs;
+}
+
+int numberOfLinesFromNode(node n) {
+	numberOfLines = -1;
+	loc l1 = |project://LabSeries1/src/lab2.rsc|; //just something
+	if(Statement myStm := n) {													
+		if (myStm@src?) l1 = myStm@src;			
+		if(l1?) {nodeLines = readFileLines(l1);
+		numberOfLines = size(nodeLines);}
+		return numberOfLines;										
+	}	
+	else if(Declaration myDecl := n) {											
+		if (myDecl@src?) l1 = myDecl@src;		
+		if(l1?) {nodeLines = readFileLines(l1);
+		numberOfLines = size(nodeLines);}
+		return numberOfLines;										
+	} else return numberOfLines;	
 }
 
 list[tuple[node n1,node n2,int t]] removeChildClones(list[tuple[node n1,node n2, int t]] clones) {
@@ -161,7 +193,7 @@ node normalizeAST(node t) {
 			}
 }
 
-list[tuple[node,node,int]] defineTypeOfClones(list[node] nodes) {	
+list[tuple[node n1, node n2, int t]] defineTypeOfClones(list[node] nodes) {	
 	//println("bucket size: <size(nodes)>");
 	list[tuple[node n1, node n2, int t]] clones = [];
 	//real pairs = 1.0;
