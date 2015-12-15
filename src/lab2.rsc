@@ -72,9 +72,9 @@ list[tuple[loc l1, loc l2, int t]] findClones(loc project) {
 	
 	// for each bucket, check for clones	
 	for(bucket <- domain(buckets)) {
-		newClones += defineTypeOfClones(buckets[bucket]);		
-		//println(size(clones));		
-	}	
+		newClones += defineTypeOfClones(buckets[bucket]);					
+	}
+	println(size(newClones));	
 	
 	println("removing child clones...");
 	clones = removeChildClones(newClones);
@@ -209,18 +209,33 @@ list[tuple[node n1, node n2, int t]] defineTypeOfClones(list[node] nodes) {
 				//allSim += similarity;	
 				//pairs += 1;
 				//println("similarity : <similarity>");							
-				if (similarity == 1.0) {														
-				    clones += <nodes[i],nodes[j],1>;		
+				if (similarity == 1.0) {
+					node n1 = nodes[i];
+					node n2 = nodes[j];
+					if((Declaration nd := n1 || Statement nd := n1) && (Declaration nd2 := n2 || Statement nd2 := n2)) {											
+						if (nd@src? && nd2@src?) {																	
+				   			clones += <n1,n2,1>;
+				   		}
+				   	}					    
 				    //continue;		    				   
 				} else {
 					node n1 = normalizeAST(nodes[i]);
 					node n2 = normalizeAST(nodes[j]);
-					similarity = compareTrees(n1, n2);
+					similarity = compareTrees(n1, n2);					
 					if (similarity == 1.0) {	
-						clones += <nodes[i],nodes[j],2>;
+						if((Declaration nd := n1 || Statement nd := n1) && (Declaration nd2 := n2 || Statement nd2 := n2)) {											
+							if (nd@src? && nd2@src?) {													
+					   			clones += <n1,n2,2>;
+					   		}
+						}	
 						//continue;
 					} else if(similarity > 0.80) { // what is the minimum similarity for type-3 ???
-						clones += <nodes[i],nodes[j],3>;}
+						if((Declaration nd := n1 || Statement nd := n1) && (Declaration nd2 := n2 || Statement nd2 := n2)) {											
+							if (nd@src? && nd2@src?) {													
+					   			clones += <n1,n2,3>;
+					   		}
+					   	}		
+					}
 					else continue;
 					
 				}

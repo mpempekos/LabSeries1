@@ -4,6 +4,7 @@ import lab2;
 import visualization;
 import lang::java::m3::AST;
 import IO;
+import vis:: Figure;
 
 void runTests() { 
 	// lab2.rsc
@@ -18,6 +19,10 @@ void runTests() {
 	assert createTree_NoPairs() : "fail createTree_NoPairs";
 	assert createTree_OnePair() : "fail createTree_OnePair";
 	assert insert2Leaves_1EmptyTree1Pair() : "fail insert2Leaves_1EmptyTree1Pair";
+	assert insertPathOfNodesAndLeaf_1Node1Leaf() : "fail insertPathOfNodesAndLeaf_1Node1Leaf";
+	assert insertInSubTrees_1SubTree() : "fail insertInSubTrees_1SubTree";
+	assert createFragment_test() : "fail createFragment_test";
+	assert visualize_1Box() : "fail visualize_1Box";
 }
 
 //////////////
@@ -42,16 +47,19 @@ bool treeMass_NodeWithTreeMass1() {
 	return 1 == treeMass(n1);	
 }
 
-bool defineTypeOfClones_type1(){
-	node n1 = \int();	
+bool defineTypeOfClones_type1(){		
+	Statement n1 = \return();
+	n1@src = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
 	list[node] l = [n1, n1];
 	t = defineTypeOfClones(l);
 	return t[0].t == 1;
 }
 
 bool defineTypeOfClones_type2(){
-	node n1 = \int();
-	node n2 = \boolean();
+	Statement n1 =\label("abc", \return());
+	n1@src = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	Statement n2 = \label("cba", \return());
+	n2@src = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
 	list[node] l = [n1, n2];
 	t = defineTypeOfClones(l);
 	return t[0].t == 2;
@@ -73,27 +81,26 @@ bool removeChildClones_2Pairs1Child() {
 	p += [<n2, n2, t>];
 	return [<n1, n1, t>] == removeChildClones(p);
 }
-
+//list[tuple[loc l1, loc l2, int t]] findClones(loc project) {
 //bool defineTypeOfClones_type3(){
 //}
-
-//findClones
 
 ///////////////////////
 // visualization.rsc //
 ///////////////////////
 
 //getLastSingleNode
-
-//visualize
-
-//getColorFromType
-
+bool visualize_1Box() {
+	ProjectStructure tree = folderOrFile("junit", 0, []);
+	loc l1 = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	int t = 1;
+	tuple[loc l1, int t] pair = <l1, t>;
+	loc selectedFigLoc = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);	
+	Figure fig = treemap([],area(0), fillColor(rgb(94, 237, 111)));
+	return fig == visualize(tree, [pair], selectedFigLoc);
+}
+//getColorFromType 
 //colorClonedBox
-
-//data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLocation, int typee]] clones)
-//| folderOrFile(str name, int numberOfFragments, list[ProjectStructure] subFolders);
-
 bool createTree_NoPairs() {
 	str rootName = "junit";	
 	return folderOrFile(rootName, 0, []) == createTree([], rootName);
@@ -141,8 +148,54 @@ bool insert2Leaves_1EmptyTree1Pair() {
 	return expectedTree == insert2Leaves(tree, pair, rootName);
 }
 
-// tuple[ProjectStructure tree, bool fragmentAdded] insertPathOfNodesAndLeaf(ProjectStructure tree, list[str] pathForInsertion, tuple[loc l1, loc l2, int t] pair, bool fragmentAdded) {	
+bool insertPathOfNodesAndLeaf_1Node1Leaf() {
+	str rootName = "junit";
+	ProjectStructure tree = folderOrFile(rootName, 0, []);
+	list[str] pathForInsertion = ["TestAlterTable2.java"];
+	loc l1 = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	loc l2 = |file:///C:/junit/TestAlterTable2.java|(2472,575,<71,4>,<80,5>);
+	int t = 1;
+	tuple[loc l1, loc l2, int t] pair = <l1, l2, t>;
+	fragmentAdded = false;
+	list[tuple[loc cloneLocation, int typee]] clones1 = [<l2, t>];
+	int bl1 = 41;
+	int el1 = 50;
+	str subTreeName = "TestAlterTable2.java";
+	int numberOfFragments = 1;
+	ProjectStructure leaf1 = fragment(bl1, el1, l1, clones1);
+	ProjectStructure subTree = folderOrFile(subTreeName, numberOfFragments, [leaf1]);	
+	ProjectStructure expectedTree = folderOrFile(rootName, 0, [subTree]);	
+	return <expectedTree, true> == insertPathOfNodesAndLeaf(tree, pathForInsertion, pair, fragmentAdded); 
+}
 
-// tuple[ProjectStructure,bool] insertInSubTrees(ProjectStructure tree, tuple[ProjectStructure subTree, bool fragmentAdded] pairSubTreeFragmentAdded) {
+bool insertInSubTrees_1SubTree() {
+	str rootName = "junit";
+	ProjectStructure tree = folderOrFile(rootName, 0, []);
+	loc l1 = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	loc l2 = |file:///C:/junit/TestAlterTable2.java|(2472,575,<71,4>,<80,5>);
+	int t = 1;
+	tuple[loc l1, loc l2, int t] pair = <l1, l2, t>;
+	fragmentAdded = true;
+	list[tuple[loc cloneLocation, int typee]] clones1 = [<l2, t>];
+	int bl1 = 41;
+	int el1 = 50;
+	str subTreeName = "TestAlterTable2.java";
+	int numberOfFragments = 1;
+	ProjectStructure leaf1 = fragment(bl1, el1, l1, clones1);
+	ProjectStructure subTree = folderOrFile(subTreeName, numberOfFragments, [leaf1]);	
+	tuple[ProjectStructure, bool] pairSubTreeFragmentAdded = <subTree, fragmentAdded>;	
+	ProjectStructure expectedTree = folderOrFile(rootName, 0, [subTree]);
+	return <expectedTree, fragmentAdded> == insertInSubTrees(tree, pairSubTreeFragmentAdded);	
+}
 
-// ProjectStructure createFragment(tuple[loc l1, loc l2, int t] pair) {	
+bool createFragment_test() {
+	loc l1 = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	loc l2 = |file:///C:/junit/TestAlterTable2.java|(2472,575,<71,4>,<80,5>);
+	int t = 1;
+	int bl1 = 41;
+	int el1 = 50;
+	list[tuple[loc cloneLocation, int typee]] clones1 = [<l2, t>];
+	tuple[loc l1, loc l2, int t] pair = <l1, l2, t>;
+	ProjectStructure leaf1 = fragment(bl1, el1, l1, clones1);
+	return leaf1 == createFragment(pair);
+}
