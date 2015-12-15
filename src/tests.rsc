@@ -109,6 +109,34 @@ bool visualize_1Box() {
 	Figure fig = treemap([],area(0), fillColor(rgb(94, 237, 111)));
 	return fig == visualize(tree, [pair], selectedFigLoc);
 }
+
+bool checkBoxesEqualLeaves() {
+	ProjectStructure tree = folderOrFile("junit", 0, []);
+	loc selectedFigLoc = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	Figure fig = visualize(tree, [], selectedFigLoc);
+	return countLeaves(tree) == countBoxes(fig);
+		
+}
+
+int countLeaves (ProjectStructure tree) {
+	counter = 0;
+	visit(tree) {
+		case fragment(_,_,_,_) : counter += 1;
+	}
+
+	return counter;
+}
+
+
+int countBoxes (Figure fig) {
+	counter = 0;
+	visit(fig) {
+		case _box(_) : counter += 1;
+	}
+
+	return counter;
+}
+
 //getColorFromType 
 //colorClonedBox
 bool createTree_NoPairs() {

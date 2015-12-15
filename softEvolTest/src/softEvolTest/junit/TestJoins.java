@@ -106,6 +106,12 @@ public class TestJoins extends BasicTestCase {
 		// wtf
 		real x;
 		str y;
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 	}
 	
 	public void test() {
@@ -113,6 +119,12 @@ public class TestJoins extends BasicTestCase {
 		// wtf
 		real x;
 		str y;
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 	}
 	
 	

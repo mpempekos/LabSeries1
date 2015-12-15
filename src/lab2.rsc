@@ -280,14 +280,8 @@ list[tuple[node n1, node n2, int t]] defineTypeOfClones(list[node] nodes) {
 }
 
 real compareTrees(node t1, node t2) {
-	list[node] nodes1 = [];
-	list[node] nodes2 = [];
-	visit(t1) {		
-		case node n1: nodes1 += n1;
-	}
-	visit(t2) {		
-		case node n2: nodes2 += n2;
-	}
+	list[node] nodes1 = [n1 | /node n1 := t1];
+	list[node] nodes2 = [n2 | /node n2 := t2];
 	//println("nodes1: <size(nodes1)>");	
 	//println("nodes2: <size(nodes2)>");	
 	list[node] nodes = nodes1 & nodes2;

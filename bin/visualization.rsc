@@ -46,8 +46,8 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
 	totalType1 = totalType2 = totalType3 = 0;
-	clones = findClones(|project://softEvolTest|);
-	//clones = findClones(|project://smallsql0.21_src|);
+	//clones = findClones(|project://softEvolTest|);
+	clones = findClones(|project://smallsql0.21_src|);
 	//clones = findClones(|project://hsqldb-2.3.1|);
 	
 	for (i <-clones) {
