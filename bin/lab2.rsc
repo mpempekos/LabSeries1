@@ -221,7 +221,8 @@ list[tuple[node n1, node n2, int t]] defineTypeOfClones(list[node] nodes) {
 				} else {
 					node n1 = normalizeAST(nodes[i]);
 					node n2 = normalizeAST(nodes[j]);
-					similarity = compareTrees(n1, n2);					
+					similarity = compareTrees(n1, n2);	
+					println(similarity);				
 					if (similarity == 1.0) {	
 						if((Declaration nd := n1 || Statement nd := n1) && (Declaration nd2 := n2 || Statement nd2 := n2)) {											
 							if (nd@src? && nd2@src?) {													

@@ -13,6 +13,7 @@ void runTests() {
 	assert treeMass_NodeWithTreeMass1() : "fail treeMass_NodeWithTreeMass1";
 	assert defineTypeOfClones_type1() : "fail defineTypeOfClones_type1";
 	assert defineTypeOfClones_type2() : "fail defineTypeOfClones_type2";
+	assert defineTypeOfClones_NotType3() : "fail defineTypeOfClones_NotType3";
 	assert removeSubTreesClones_listWith1Node() : "fail removeSubTreesClones_listWith1Node";
 	assert removeChildClones_2Pairs1Child() : "fail removeChildClones_2Pairs1Child";
 	// visualization.rsc
@@ -65,6 +66,17 @@ bool defineTypeOfClones_type2(){
 	return t[0].t == 2;
 }
 
+bool defineTypeOfClones_NotType3(){
+	Statement n1 = \block([\return(\bracket(\cast(\int(), \this())))]);
+	n1@src = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	Statement n2 = \block([\return(\bracket(\cast(\int(), \null())))]);
+	n2@src = |file:///C:/junit/TestAlterTable2.java|(1126,573,<41,4>,<50,5>);
+	list[node] l = [n1, n2];
+	t = defineTypeOfClones(l);
+	if(t[0].t?) if(t[0].t != 3) return true;
+	return false;
+}
+
 bool removeSubTreesClones_listWith1Node() {
 	node n1 = \assert(\null());
 	node n2 = \null();
@@ -82,8 +94,6 @@ bool removeChildClones_2Pairs1Child() {
 	return [<n1, n1, t>] == removeChildClones(p);
 }
 //list[tuple[loc l1, loc l2, int t]] findClones(loc project) {
-//bool defineTypeOfClones_type3(){
-//}
 
 ///////////////////////
 // visualization.rsc //
