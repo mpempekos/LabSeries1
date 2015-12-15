@@ -13,6 +13,10 @@ import Set;
 import Relation;
 import util::Eval;
 import visualization;
+import volumeAndDuplication;
+import String;
+
+data CustomVar = customVarInit(str line,str pureLine, bool isCommentOpened);
 
 /*
  * Situation point:
@@ -144,7 +148,9 @@ int numberOfLinesFromNode(node n) {
 		if (myStm@src?) l1 = myStm@src;			
 		if(l1?) {
 			nodeLines = readFileLines(l1);
-			numberOfLines = size(nodeLines);
+			pureNodeLines = removeComments(nodeLines);
+			//numberOfLines = size(nodeLines);
+			numberOfLines = size(pureNodeLines);
 		}
 		return numberOfLines;										
 	}	
@@ -152,10 +158,34 @@ int numberOfLinesFromNode(node n) {
 		if (myDecl@src?) l1 = myDecl@src;		
 		if(l1?) {
 			nodeLines = readFileLines(l1);
-			numberOfLines = size(nodeLines);
+			pureNodeLines = removeComments(nodeLines);
+			//numberOfLines = size(nodeLines);
+			numberOfLines = size(pureNodeLines);
 		}
 		return numberOfLines;										
 	} else return numberOfLines;	
+}
+
+
+list[str] removeComments (list[str] sourceCode) {
+
+	pureCode = [];
+	myCustomVar = customVarInit("","",false); 
+	
+	for(i <- sourceCode) {
+				
+					myCustomVar.line = i;
+					myCustomVar.pureLine = "";
+					myCustomVar = getPureCode(myCustomVar);
+					
+					if (!isEmpty(myCustomVar.pureLine)) {
+						pureCode += myCustomVar.pureLine;						
+						//linesOfCode += 1;
+					}
+	}
+	
+	return pureCode;
+
 }
 
 list[tuple[node n1,node n2,int t]] removeChildClones(list[tuple[node n1,node n2, int t]] clones) {
@@ -222,7 +252,7 @@ list[tuple[node n1, node n2, int t]] defineTypeOfClones(list[node] nodes) {
 					node n1 = normalizeAST(nodes[i]);
 					node n2 = normalizeAST(nodes[j]);
 					similarity = compareTrees(n1, n2);	
-					println(similarity);				
+					//println(similarity);				
 					if (similarity == 1.0) {	
 						if((Declaration nd := n1 || Statement nd := n1) && (Declaration nd2 := n2 || Statement nd2 := n2)) {											
 							if (nd@src? && nd2@src?) {													

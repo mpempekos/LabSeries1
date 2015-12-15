@@ -101,6 +101,20 @@ public class TestJoins extends BasicTestCase {
         dropTable( con, table3 );
 	}
 	
+	public void test() {
+		int a;
+		// wtf
+		real x;
+		str y;
+	}
+	
+	public void test() {
+		int a;
+		// wtf
+		real x;
+		str y;
+	}
+	
 	
     public void tearDown() throws SQLException{
 		clear();

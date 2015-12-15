@@ -13,22 +13,31 @@ import vis::KeySym;
 import util::Editors;
 
 
-/******************************************** Documentation for Visualization *************************************************
+/******************************************************************************************************************************
+********************************************* Documentation for Visualization *************************************************
+*******************************************************************************************************************************
 -
--The visualization includes all the clones that were found at the project, and starts from the last single folder of the project.
--In the first figure, there is an overview of the project, and user can see how many clone pairs exist for a specific clone.
--The color of the clones is decided as follows: --------------------------------------------------------------------------------
+-The visualization includes all the clones that were found at the project. In the beginning, general results are shown to the 
+user at the top of the figure about the clone detection(clones, pairs and pairs for each type (1-3)).
+- User can also see how many clone pairs exist for a specific clone (number inside the box)
+-Initially, the color of the clones is a  shade of blue, and the darker the color, the more clone pairs has the specific clone
 -When the user left-clicks on one clone, the specific clone becomes yellow, and all of its pairs get one of the following colors,
--depending on the type of the clone: lightpink(type1), hotpink(type2), red(type3)
--By right-clicking on one clone, the user is redirected to the file of the related clone.
--User can always go back to the initial overview by pressing 'esc', when he is inside the figure of the visualization
+-depending on the type of the clone: lightpink(type1), hotpink(type2), red(type3). User can also see the location of the selected
+clone on the top bar of the figure.
+-By right-clicking on one clone, the user is redirected to the file and specific lines of the related clone(fragment).
+-User can always go back to the initial overview by pressing 'esc', when mouse is entered into one of the boxes of the visualization.
+In this case, general results are shown again.
 -
+*********************************************************************************************************************************
+*********************************************************************************************************************************
 -********************************************************************************************************************************/
 
 public map[loc,Figure] leavesToBoxes = ();
 public Figure fig;
 public ProjectStructure originalTree;
 public Figure infoBox = box(text(""),vshrink(0.1),top());
+public set[loc] totalClones = {};
+public int totalType1,totalType2,totalType3,totalPairs;
 
 data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLocation, int typee]] clones)
 | folderOrFile(str name, int numberOfFragments, list[ProjectStructure] subFolders);
@@ -36,9 +45,24 @@ data ProjectStructure = fragment(int bl, int el, loc l, list[tuple[loc cloneLoca
 
 void runVisualization() {
 	list[tuple[loc l1, loc l2, int t]] clones;
-	//clones = findClones(|project://softEvolTest|); // why 30??
-	clones = findClones(|project://smallsql0.21_src|);
-	//clones = findClones(|project://hsqldb-2.3.1|);	
+	totalType1 = totalType2 = totalType3 = 0;
+	clones = findClones(|project://softEvolTest|);
+	//clones = findClones(|project://smallsql0.21_src|);
+	//clones = findClones(|project://hsqldb-2.3.1|);
+	
+	for (i <-clones) {
+		totalClones += i.l1;
+		totalClones += i.l2;
+		if (i.t ==1)	totalType1+=1;
+		else if (i.t ==2) totalType2+=1;
+		else totalType3+=1;
+	}
+	
+	println(size(totalClones));
+	totalPairs = size(clones);
+	
+	infoBox = box(text("Total clones: <size(totalClones)> || Total Pairs: <totalPairs> || Type1: <totalType1> pairs || Type2: <totalType2> pairs || Type3: <totalType3> pairs||"),vshrink(0.1),top());
+	
 	ProjectStructure tree = getLastSingleNode(createTree(clones, "softEvolTest"));		
 	originalTree = tree;
 	//println("final tree: <tree>");		
@@ -81,8 +105,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			//println("Fragment <l> has these clones: <clones2>");	
 					
 			if (l == selectedFigLoc)  {
-				fig = box(id("<l>"),area(int() {return ((el - bl)+1);}),fillColor("yellow"),
-				//fig = box(id("<l>"),area(1),fillColor("yellow"),
+				//fig = box(id("<l>"),area(int() {return ((el - bl)+1);}),fillColor("yellow"),
+				fig = box(id("<l>"),area(1),fillColor("yellow"),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -93,6 +117,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
 					if (key == keyEscape()) {
+						infoBox = box(text("Total clones: <size(totalClones)> || Total Pairs: <totalPairs> || Type1: <totalType1> pairs || Type2: <totalType2> pairs || Type3: <totalType3> pairs||"),vshrink(0.1),top());
 						x = visualize(originalTree,[],|project://nonexisting-project/src/nonexisting.java|);
 						y = vcat([infoBox,x]);
 						render(y);
@@ -104,8 +129,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 			else if (l in clones.l1)  {
 				int typee = 0;
 				for(clone <- clones) if(l == clone.l1) typee = clone.t;	
-				fig = box(id("<l>"),area(int() {return ((el - bl)+1);}),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
-				//fig = box(id("<l>"),area(1),fillColor(getColorFromType(l,clones)),
+				//fig = box(id("<l>"),area(int() {return ((el - bl)+1);}),fillColor(getColorFromType(l,clones)),		// (rgb(242,70,70)));	//y u changed it?
+				fig = box(id("<l>"),area(1),fillColor(getColorFromType(l,clones)),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -116,6 +141,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
 					if (key == keyEscape()) {
+						infoBox = box(text("Total clones: <size(totalClones)> || Total Pairs: <totalPairs> || Type1: <totalType1> pairs || Type2: <totalType2> pairs || Type3: <totalType3> pairs||"),vshrink(0.1),top());
 						x = visualize(originalTree,[],|project://nonexisting-project/src/nonexisting.java|);
 						y = vcat([infoBox,x]);
 						render(y);
@@ -136,8 +162,8 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 				else if(numberOfClones < 15) c = color("royalblue");
 				else c = color("Black");
 							
-				fig = box(text("<numberOfClones>"), id("<l>"),area(int() {return ((el - bl)+1);}),fillColor(Color() {return c;}),
-				//fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
+				//fig = box(text("<numberOfClones>"), id("<l>"),area(int() {return ((el - bl)+1);}),fillColor(Color() {return c;}),
+				fig = box(text("<numberOfClones>"), id("<l>"),area(1),fillColor(Color() {return c;}),
 				
 				onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
 					if (butnr == 1)
@@ -148,6 +174,7 @@ Figure visualize(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc se
 					
 				onKeyDown(bool (KeySym key, map[KeyModifier,bool] modifiers) {
 					if (key == keyEscape()) {
+						infoBox = box(text("Total clones: <size(totalClones)> || Total Pairs: <totalPairs> || Type1: <totalType1> pairs || Type2: <totalType2> pairs || Type3: <totalType3> pairs||"),vshrink(0.1),top());
 						x = visualize(originalTree,[],|project://nonexisting-project/src/nonexisting.java|);
 						y = vcat([infoBox,x]);
 						render(y);
@@ -173,7 +200,7 @@ void showInfoAtBox(ProjectStructure tree,list[tuple[loc l1, int t]] clones, loc 
 
 void colorClones(list[tuple[loc cloneLocation, int typee]] clones,ProjectStructure tree,loc selectedFigLoc) {	
 	leavesToBoxes = ();
-	infoBox = box(text("Selected lines: <selectedFigLoc.begin.line>-<selectedFigLoc.end.line> @ <selectedFigLoc.uri>"),vshrink(0.1),top());	
+	infoBox = box(text("TOTAL: <size(totalClones)> ||| Selected Fragment: <selectedFigLoc.end.line -selectedFigLoc.begin.line + 1> lines:   <selectedFigLoc.begin.line>-<selectedFigLoc.end.line> @ <selectedFigLoc.uri>"),vshrink(0.1),top());	
 	//render(visualize(tree, clones,selectedFigLoc));	
 	x = visualize(tree,clones,selectedFigLoc);
 	y = vcat([infoBox,x]);
