@@ -1,5 +1,6 @@
 # LabSeries
-# A program that analyzes Java programs and detects clones based on Abstract Syntax Trees. An interactive visualization is shown to the user. # Written in Rascal in Eclipse IDE.
+
+A program that analyzes Java programs and detects clones based on Abstract Syntax Trees. An interactive visualization is shown to the user. Written in Rascal in Eclipse IDE.
 
 This project was part of the course 'Software Evolution' during Msc of Software Engineering. It consists of 2 parts.
 
