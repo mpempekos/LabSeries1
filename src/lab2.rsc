@@ -222,7 +222,7 @@ node normalizeAST(node t) {
 	return visit(t) {				
 				case Type _ => wildcard()														
 				case str _ => ""
-				case int _ => 1	
+				//case \number(_) _ => \number("1")	
 				//case bool _ => true				
 			}
 }

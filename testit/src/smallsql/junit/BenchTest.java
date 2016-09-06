@@ -36,6 +36,7 @@ import java.sql.*;
 
 public class BenchTest
 {
+	
     static byte[] byteArray = {23, 34, 67 };
     static byte[] largeByteArray = new byte[4000];
     
